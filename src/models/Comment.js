@@ -1,7 +1,7 @@
-export const CommentInfo = (sequelize, DataTypes) => {
+module.exports = CommentInfo = (sequelize, DataTypes) => {
     return sequelize.define('comment_info', {
         comment_id: {
-            type: DataTypes.INT(11),
+            type: DataTypes.INTEGER(11),
             primaryKey: true
         },
         member_id: {
@@ -9,7 +9,7 @@ export const CommentInfo = (sequelize, DataTypes) => {
             allowNull: false
         },
         group_id: {
-            type: DataTypes.INT(11),
+            type: DataTypes.INTEGER(11),
             primaryKey: false
         },
         content: {
@@ -17,7 +17,7 @@ export const CommentInfo = (sequelize, DataTypes) => {
             allowNull: false
         },
         write_time: {
-            type: DataTypes.DATETIME,
+            type: DataTypes.DATE,
             primaryKey: false
         }
     })

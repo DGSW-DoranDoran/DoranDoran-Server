@@ -1,4 +1,4 @@
-export const MemberInfo = (sequelize, DataTypes) => {
+module.exports =  MemberInfo = (sequelize, DataTypes) => {
     return sequelize.define('member_info', {
         member_id: {
             type: DataTypes.STRING(30),
@@ -17,11 +17,11 @@ export const MemberInfo = (sequelize, DataTypes) => {
             allowNull: false
         },
         grade: {
-            type: DataTypes.INT(11),
+            type: DataTypes.INTEGER(11),
             allowNull: false
         },
         gender: {
-            type: DataTypes.INT(11),
+            type: DataTypes.INTEGER(11),
             allowNull: false
         },
         phone_number: {
@@ -30,7 +30,7 @@ export const MemberInfo = (sequelize, DataTypes) => {
         },
         image: {
             type: DataTypes.STRING(100),
-            allowNull: false
+            allowNull: true
         }
     })
 }

@@ -1,4 +1,4 @@
-export const GroupInfo = (sequelize, DataTypes) => {
+module.exports = GroupInfo = (sequelize, DataTypes) => {
     return sequelize.define('group_info', {
         group_id: {
             type: DataTypes.INTEGER,
@@ -22,11 +22,11 @@ export const GroupInfo = (sequelize, DataTypes) => {
         },
         deadline_member: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: true
         },
         deadline_time: {
             type: DataTypes.TEXT,
-            allowNull: false
+            allowNull: true
         },
         status: {
             type: DataTypes.STRING(30),
@@ -38,7 +38,7 @@ export const GroupInfo = (sequelize, DataTypes) => {
         },
         image: {
             type: DataTypes.TEXT,
-            allowNull: false
+            allowNull: true
         }
     })
 }
