@@ -39,6 +39,8 @@ module.exports = GroupInfo = (sequelize, DataTypes) => {
         image: {
             type: DataTypes.TEXT,
             allowNull: true
-        }
-    })
+        },
+    },{
+        timestamps: false,
+    });
 }

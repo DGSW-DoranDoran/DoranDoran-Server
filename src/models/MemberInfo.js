@@ -1,5 +1,5 @@
 module.exports =  MemberInfo = (sequelize, DataTypes) => {
-    return sequelize.define('member_info', {
+    const Member = sequelize.define('member_info', {
         member_id: {
             type: DataTypes.STRING(30),
             primaryKey: true
@@ -31,6 +31,20 @@ module.exports =  MemberInfo = (sequelize, DataTypes) => {
         image: {
             type: DataTypes.STRING(100),
             allowNull: true
-        }
-    })
+        },
+    },{
+        timestamps: false,
+    });
+
+    Member.findMemberForLogin = (id, pw) => Member.findOne({
+        attributes: ['member_id', 'name', 'position', 'grade', 'gender', 'phone_number', 'image'],
+        where: {
+            member_id: id,
+            password: pw,
+          },
+    
+        raw: true,
+    });
+
+    return Member;
 }

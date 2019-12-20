@@ -19,6 +19,8 @@ module.exports = CommentInfo = (sequelize, DataTypes) => {
         write_time: {
             type: DataTypes.DATE,
             primaryKey: false
-        }
-    })
+        },
+    },{
+        timestamps: false,
+    });
 }

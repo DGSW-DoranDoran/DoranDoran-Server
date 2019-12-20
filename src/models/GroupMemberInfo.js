@@ -19,6 +19,8 @@ module.exports =  GroupMemberInfo = (sequelize, DataTypes) => {
         member_count: {
             type: DataTypes.INTEGER(11),
             allowNull: false
-        }
-    })
+        },
+    },{
+        timestamps: false,
+    });
 }
