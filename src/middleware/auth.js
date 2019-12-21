@@ -1,15 +1,15 @@
-const tokenLib = require('../lib/token');
+const _token = require('../lib/token');
 const db = require('../../models');
 
 module.exports = async (req, res, next) => {
     const { token } = req.headers;
     if(!token) {
-        return res.status(403).send('토큰을 전송해주세요.');
+        return res.status(403).send('토큰 값이 없음');
     }
     console.log(`start decoded`);
-    let decoded = await tokenLib.verifyToken(token);
+    let decoded = await _token.verifyToken(token);
     if(!decoded) {
-        return res.status(403).send('토큰 정보가 undefinded or null 입니다.');
+        return res.status(403).send('토큰이 정의되지 않거나 null임');
     }
     
     await db.User.findOne({where: { id: decoded.id }})

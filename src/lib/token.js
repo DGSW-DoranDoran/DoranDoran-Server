@@ -11,7 +11,7 @@ exports.createToken = async (member) => {
   const payload = {
     member,
   };
-  const option = { expiresIn: '5 days', issuer: 'dgswbamboo.com', subject: 'token' };
+  const option = { expiresIn: '5 days', issuer: 'doran.bind.com', subject: 'token' };
   console.log(payload);
   
   try {

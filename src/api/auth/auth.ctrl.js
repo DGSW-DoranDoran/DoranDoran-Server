@@ -2,8 +2,8 @@ const models = require('../../models');
 const tokenLib = require('../../lib/token');
 
 exports.login = async (req, res) => {
-  const { id, pw } = req.body;
-
+  const { id, password } = req.body;
+password
   if(!id) {
     const result = {
       status: 400,
@@ -14,10 +14,10 @@ exports.login = async (req, res) => {
 
     return;
   }
-  if(!pw) {
+  if(!password) {
     const result = {
       status: 400,
-      message: "pw를 입력하세요!",
+      message: "password를 입력하세요!",
     }
 
     res.status(400).json(result);
@@ -26,14 +26,15 @@ exports.login = async (req, res) => {
   }
 
   try {
-    const member = await models.MemberInfo.findMemberForLogin(id, pw);
+    const member = await models.MemberInfo.findMemberForLogin(id, password);
     // log
-    console.log(`${id} + ${pw}`);
+    console.log(`${id} + ${password}`);
+    console.log(member);
     
     if(!member) {
       const result = {
         status: 403,
-        message: "id 혹은 pw가 잘못 되었습니다!",
+        message: "id 혹은 password가 잘못 되었습니다!",
       }
   
       res.status(403).json(result);
@@ -68,7 +69,7 @@ exports.login = async (req, res) => {
 }
 
 exports.signUp = (req, res) => {
-  // const { email, pw,  }
+  // const { email, password,  }
   try {
     const result = {
       status: 200,
