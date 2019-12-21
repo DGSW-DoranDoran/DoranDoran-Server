@@ -1,8 +1,11 @@
 module.exports = CommentInfo = (sequelize, DataTypes) => {
+    var date = new Date();
+
     const Comment = sequelize.define('comment_info', {
         comment_id: {
             type: DataTypes.INTEGER(11),
-            primaryKey: true
+            primaryKey: true,
+            autoIncreasement: true
         },
         member_id: {
             type: DataTypes.STRING(30),
@@ -20,7 +23,7 @@ module.exports = CommentInfo = (sequelize, DataTypes) => {
             type: DataTypes.DATE,
             primaryKey: false
         },
-    },{
+    }, {
         timestamps: false,
     });
 
@@ -30,6 +33,23 @@ module.exports = CommentInfo = (sequelize, DataTypes) => {
         },
         raw: true
     });
+
+    Comment.postComment = (group_id, member_id, comment) => {
+        return Comment.create({
+            group_id: group_id,
+            member_id: member_id,
+            content: comment,
+            write_time: date
+        });
+    }
+
+    Comment.deleteComment = (comment_id) => {
+        Comment.destroy({
+            where: {
+                comment_id: comment_id
+            }
+        })
+    }
 
     return Comment;
 }

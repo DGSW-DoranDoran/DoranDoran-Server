@@ -3,10 +3,6 @@ const models = require('../../models');
 exports.getComment = async (req, res) => {
     const { group_id } = req.body;
 
-    console.log(req.body);
-
-    console.log(group_id);
-
     if(!group_id) {
         const result = {
             status: 400,
@@ -18,7 +14,7 @@ exports.getComment = async (req, res) => {
         return;
     }else {
         try {
-            const comment = await models.Comment.AllComment(group_id);
+            const comment = await models.Comment.getComment(group_id);
 
             const result = {
                 status: 200,
@@ -55,10 +51,36 @@ exports.postComment = async (req, res) => {
         }
 
         res.status(400).json(result);
+
+        return;
     }else {
         try{
-            
+            await models.Comment.postComment(group_id, member_id, comment);
+
+            const result = {
+                status: 200,
+                message: "Success to Write Comment"
+            }
+
+            res.status(200).json(result);
         }catch(error) {
+            console.log(error);
+
+            const result = {
+                status: 400,
+                message: "Server Error"
+            }
+
+            res.status(400).json(result);
+        }
+    }
+}
+
+exports.deleteComment = async (req, res) => {
+    const { comment_id } = req.body;
+
+    if(!comment_id) {
+        const result = {
 
         }
     }
