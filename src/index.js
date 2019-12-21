@@ -6,10 +6,11 @@ const db = require('./models/index');
 const api = require('./api');
 const app = express();
 
-db.sequelize.sync();
-
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+db.sequelize.sync();
 
 app.use('/', api);
 
