@@ -1,5 +1,5 @@
 module.exports = CommentInfo = (sequelize, DataTypes) => {
-    return sequelize.define('comment_info', {
+    const Comment = sequelize.define('comment_info', {
         comment_id: {
             type: DataTypes.INTEGER(11),
             primaryKey: true
@@ -23,4 +23,13 @@ module.exports = CommentInfo = (sequelize, DataTypes) => {
     },{
         timestamps: false,
     });
+
+    Comment.getComment = (group_id) => Comment.findAll({
+        where: {
+            group_id: group_id
+        },
+        raw: true
+    });
+
+    return Comment;
 }
