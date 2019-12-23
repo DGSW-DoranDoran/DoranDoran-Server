@@ -81,5 +81,24 @@ module.exports = (sequelize, DataTypes) => {
         category_id: data.category_id
     });
 
+    Group.modify = (data) => Group.update({
+        name: data.name,
+        content: data.content,
+        deadline_time: data.deadline_time,
+        deadline_member_count: data.deadline_member_count,
+        image: data.image,
+        category_id: data.category_id
+    }, {
+        where: {
+            id: data.group_id
+        }
+    });
+
+    Group.delete = (group_id) => Group.destroy({
+        where: {
+            id: group_id
+        }
+    });
+
     return Group;
 };
