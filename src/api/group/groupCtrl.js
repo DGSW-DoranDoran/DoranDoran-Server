@@ -157,8 +157,6 @@ exports.createGroup = async (req, res) => {
         res.status(400).json(result);
     } else {
         try {
-
-            console.log(body);
             await models.Group.createGroup(body);
 
             msg = "그룹 생성 성공";
@@ -175,6 +173,100 @@ exports.createGroup = async (req, res) => {
             console.log(colors.red(error));
 
             msg = "서버 에러";
+
+            const result = {
+                status: 500,
+                message: msg
+            };
+
+            res.status(500).json(result);
+        };
+    };
+};
+
+exports.modifyGroup = async (req, res) => {
+    console.log(colors.blue('[PUT] Modify Group'));
+
+    const { body } = req;
+
+    var msg = "";
+
+    if (!body.group_id) {
+        msg = "group_id가 없습니다.";
+
+        console.log(colors.red('Error: ' + msg));
+
+        const result = {
+            status: 400,
+            message: msg
+        };
+
+        res.status(400).json(result);
+    } else {
+        try {
+            await models.Group.modify(body);
+
+            msg = "그룹 정보 수정 성공";
+
+            console.log(colors.green('Success: ' + msg));
+
+            const result = {
+                status: 200,
+                message: msg
+            };
+
+            res.status(200).json(result);
+        } catch (error) {
+            msg = "서버 에러";
+
+            console.log('ServerError: ' + error);
+
+            const result = {
+                status: 500,
+                message: msg
+            };
+
+            res.status(500).json(result);
+        };
+    };
+};
+
+exports.delete = async (req, res) => {
+    console.log(colors.red('[DELETE] Delete Group'));
+
+    const { group_id } = req.body;
+
+    var msg = "";
+
+    if (!group_id) {
+        msg = "group_id가 없습니다.";
+
+        console.log(colors.red('Error: ' + msg));
+
+        const result = {
+            status: 400,
+            message: msg
+        };
+
+        res.status(400).json(result);
+    } else {
+        try {
+            await models.Group.delete(group_id);
+
+            msg = "그룹 삭제 성공";
+
+            console.log(colors.green('Success: ' + msg));
+
+            const result = {
+                status: 200,
+                message: msg
+            };
+
+            res.status(200).json(result);
+        } catch (error) {
+            msg = "서버 에러";
+
+            console.log(colors.red('ServerError: ' + error));
 
             const result = {
                 status: 500,
