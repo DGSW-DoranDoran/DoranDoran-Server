@@ -2,9 +2,11 @@ const models = require('../../models');
 const tokenLib = require('../../lib/token');
 
 exports.login = async (req, res) => {
-  const { id, pw } = req.body;
+  const { id, password } = req.body;
 
   if(!id) {
+    console.log("id");
+
     const result = {
       status: 400,
       message: "id를 입력하세요!",
@@ -14,7 +16,10 @@ exports.login = async (req, res) => {
 
     return;
   }
-  if(!pw) {
+
+  if(!password) {
+    console.log("pw");
+
     const result = {
       status: 400,
       message: "pw를 입력하세요!",
@@ -26,9 +31,9 @@ exports.login = async (req, res) => {
   }
 
   try {
-    const member = await models.MemberInfo.findMemberForLogin(id, pw);
+    const member = await models.MemberInfo.findMemberForLogin(id, password);
     // log
-    console.log(`${id} + ${pw}`);
+    console.log(`${id} + ${password}`);
     
     if(!member) {
       const result = {
