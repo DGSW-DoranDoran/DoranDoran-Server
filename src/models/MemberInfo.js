@@ -36,11 +36,11 @@ module.exports =  MemberInfo = (sequelize, DataTypes) => {
         timestamps: false,
     });
 
-    Member.findMemberForLogin = (id, pw) => Member.findOne({
+    Member.findMemberForLogin = (id, password) => Member.findOne({
         attributes: ['member_id', 'name', 'position', 'grade', 'gender', 'phone_number', 'image'],
         where: {
             member_id: id,
-            password: pw,
+            password: password,
           },
     
         raw: true,
