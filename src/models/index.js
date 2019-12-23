@@ -1,45 +1,47 @@
+'use strict';
+
+const colors = require('colors');
 const fs = require('fs');
 const path = require('path');
-const Sequelize = require('sequelize');
-
 const config = require('../config/config.json').development;
-
-const sequelize = new Sequelize(config.database, config.username, 
-  config.password, {
-    database: config.database,
+const Sequelize = require('sequelize');
+const sequelize = new Sequelize(config.database, config.username, config.password, {
     host: config.host,
     dialect: config.dialect,
-  });
+    logging: config.logging,
+    define: {
+        freezeTableName: true,
+        timestamps: false,
+        underscored: true
+    }
+});
+const db = {};
 
-const models = {};
+sequelize
+    .authenticate()
+    .then(() => {
+        console.log(colors.green('Connection has been established successfully'));
+    })
+    .catch(err => {
+        console.log(colors.red('Unable to connect to the database: ', err));
+    });
 
 fs.readdirSync(__dirname)
-  .filter((file) => {
-    return (file.indexOf('0') !== 0) && (file !== 'index.js');
-  })
-  .forEach((file) => {
-    const extName = path.extname(path.join(__dirname, file));
-    const baseName = path.basename(path.join(__dirname, file), extName);
+    .filter((file) => {
+        return (file.indexOf('.') !== 0) && (file !== 'index.js') && (file !== undefined) && (typeof file !== undefined) && (file !== null);
+    })
+    .forEach((file) => {
+        var model = sequelize['import'](path.join(__dirname, file));
+        db[model.name] = model;
+    });
 
-    const model = sequelize.import(path.join(__dirname, file));
-    models[baseName] = model;
-  });
+Object.keys(db).forEach(modelName => {
+    if ('associate' in db[modelName]) {
+        db[modelName].associate(db);
+    };
+});
 
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
 
-  Object.keys(models).forEach((modelName) => {
-    if ('associate' in models[modelName]) {
-      models[modelName].associate(models);
-    }
-  });
-
-  sequelize.sync().then(() => {
-    console.log('[Model - Index] Schema is synchronized');
-  }).catch((error) => {
-    console.log('[Model - Index] An error has occurred: ', (error));
-  }); 
-
-
-models.sequelize = sequelize;
-models.Sequelize = sequelize;
-
-module.exports = models;
+module.exports = db;
