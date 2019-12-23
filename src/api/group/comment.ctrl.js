@@ -1,9 +1,9 @@
 const models = require('../../models');
 
 exports.getComment = async (req, res) => {
-    const { group_id } = req.body;
+    const { group_id } = req.query;
 
-    if(!group_id) {
+    if (!group_id) {
         const result = {
             status: 400,
             message: "group_id가 없습니다."
@@ -12,7 +12,7 @@ exports.getComment = async (req, res) => {
         res.status(400).json(result);
 
         return;
-    }else {
+    } else {
         try {
             const comment = await models.Comment.getComment(group_id);
 
@@ -25,7 +25,7 @@ exports.getComment = async (req, res) => {
             }
 
             res.status(200).json(result);
-        }catch(error) {
+        } catch (error) {
             console.log(error);
 
             const result = {
@@ -44,7 +44,7 @@ exports.getComment = async (req, res) => {
 exports.postComment = async (req, res) => {
     const { group_id, member_id, comment } = req.body;
 
-    if(!group_id || !member_id || !comment) {
+    if (!group_id || !member_id || !comment) {
         const result = {
             status: 400,
             message: "Body 값 부족"
@@ -53,8 +53,8 @@ exports.postComment = async (req, res) => {
         res.status(400).json(result);
 
         return;
-    }else {
-        try{
+    } else {
+        try {
             await models.Comment.postComment(group_id, member_id, comment);
 
             const result = {
@@ -63,7 +63,7 @@ exports.postComment = async (req, res) => {
             }
 
             res.status(200).json(result);
-        }catch(error) {
+        } catch (error) {
             console.log(error);
 
             const result = {
@@ -79,9 +79,37 @@ exports.postComment = async (req, res) => {
 exports.deleteComment = async (req, res) => {
     const { comment_id } = req.body;
 
-    if(!comment_id) {
+    if (!comment_id) {
         const result = {
+            status: 400,
+            message: "comment_id Not Found"
+        }
 
+        res.status(400).json(result);
+
+        return;
+    } else {
+        try {
+            await models.Comment.deleteComment(comment_id);
+
+            const result = {
+                status: 200,
+                message: "Success"
+            }
+
+            res.status(200).json(result);
+        } catch (error) {
+            console.log(error);
+
+            const result = {
+                status: 500,
+                message: "Server Error",
+                data: {
+                    error
+                }
+            }
+
+            res.status(500).json(result);
         }
     }
 }

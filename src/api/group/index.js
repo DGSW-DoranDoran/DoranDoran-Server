@@ -1,7 +1,8 @@
-const group = require('express').Router();
-const commentCtrl = require('./comment.ctrl');
+const router = require('express').Router();
+const groupCtrl = require('./groupCtrl');
 
-group.get('/comment', commentCtrl.getComment);
-group.post('/comment', commentCtrl.postComment);
+router.get('/groups', groupCtrl.getGroups);
+router.get('/info', groupCtrl.getGroupInfo);
+router.post('/create', groupCtrl.createGroup);
 
-module.exports = group;
+module.exports = router;
