@@ -10,7 +10,7 @@ const slack = async (ctx) => {
     try {
         await axios({
             method: "POST",
-            url: "https://hooks.slack.com/services/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",
+            url: "https://hooks.slack.com/services/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",
             contentType: 'application/json',
             data: JSON.stringify({text: text})
         });
