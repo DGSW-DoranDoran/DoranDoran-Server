@@ -8,8 +8,6 @@ exports.login = async (req, res) => {
 
     const { id, password } = req.body;
 
-    console.log(req);
-
     var msg = "";
     var result = {};
 
