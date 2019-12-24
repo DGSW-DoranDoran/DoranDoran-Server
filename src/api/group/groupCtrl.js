@@ -85,6 +85,11 @@ exports.getGroupInfo = async (req, res) => {
     } else {
         try {
             const groupInfo = await models.Group.getGroupInfo(group_id);
+            const groupMember = await models.GroupMember.getMembers(group_id);
+
+            groupInfo.dataValues.groupMember = groupMember
+
+            console.log(groupInfo);
 
             msg = "그룹 정보 조회 성공";
 
@@ -106,10 +111,7 @@ exports.getGroupInfo = async (req, res) => {
 
             result = {
                 status: 500,
-                message: msg,
-                data: {
-                    error: error
-                }
+                message: msg
             };
 
             res.status(500).json(result);

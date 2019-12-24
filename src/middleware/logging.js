@@ -13,7 +13,7 @@ const slack = async (ctx) => {
             })
         });
     } catch (error) {
-        console.log('' + error);
+        console.log('Slack: ' + error);
     }
 };
 

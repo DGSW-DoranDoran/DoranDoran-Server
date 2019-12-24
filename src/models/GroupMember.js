@@ -3,7 +3,8 @@ module.exports = (sequelize, DataTypes) => {
         id: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            primaryKey: true
+            primaryKey: true,
+            autoIncrement: true
         },
         isAdmin: {
             type: DataTypes.BOOLEAN,
@@ -28,6 +29,19 @@ module.exports = (sequelize, DataTypes) => {
             targetKey: 'id'
         });
     };
+
+    GroupMember.getMembers = (group_id) => GroupMember.findAll({
+        where: {
+            group_id: group_id
+        }
+    });
+
+    GroupMember.join = (group_id, member_id, isAdmin, member_status ) => GroupMember.create({
+        group_id: group_id,
+        member_id: member_id,
+        isAdmin: isAdmin,
+        member_status: member_status
+    });
 
     return GroupMember;
 };
