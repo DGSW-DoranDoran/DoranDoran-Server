@@ -132,3 +132,56 @@ exports.write = async(req, res) => {
 
     slack(result);
 };
+
+exports.delete = async (req, res) => {
+    console.log(colors.red('[DELETE] Delete Comment'));
+
+    const { comment_id } = req.body;
+
+    var msg = "";
+    var result = {};
+
+    if (!comment_id) {
+        msg = "comment_id가 없습니다.";
+
+        console.log(colors.magenta('Error: ' + msg));
+
+        result = {
+            status: 400,
+            message: msg
+        };
+
+        res.status(400).json(result);
+    } else {
+        try {
+            await models.Comment.delete(comment_id);
+
+            msg = "댓글 삭제 성공";
+
+            console.log(colors.green('Success: ' + msg));
+
+            result = {
+                status: 200,
+                message: msg
+            };
+
+            res.status(200).json(result);
+        } catch (error) {
+            msg = "서버 에러";
+
+            console.log(colors.red('ServerError: ' + error));
+
+            result = {
+                status: 500,
+                message: msg
+            };
+
+            res.status(500).json(result);
+        };
+    };
+
+    result.body = Object.values(req.body);
+    result.query = Object.values(req.query);
+
+    slack(result);
+};
