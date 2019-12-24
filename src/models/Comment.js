@@ -23,5 +23,23 @@ module.exports = (sequelize, DataTypes) => {
         });
     };
 
+    Comment.getComments = (group_id) => Comment.findAll({
+        where: {
+            group_id: group_id
+        }
+    });
+
+    Comment.write = (data) => Comment.create({
+        group_id: data.group_id,
+        member_id: data.member_id,
+        comment: data.comment
+    });
+
+    Comment.delete = (comment_id) => Comment.destroy({
+        where: {
+            id: comment_id
+        }
+    });
+
     return Comment;
 };
