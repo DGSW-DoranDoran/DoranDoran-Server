@@ -39,6 +39,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false,
             defaultValue: 0
+        },
+        founder: {
+            type: DataTypes.STRING(45),
+            allowNull: false
         }
     });
 
@@ -98,6 +102,15 @@ module.exports = (sequelize, DataTypes) => {
         where: {
             id: group_id
         }
+    });
+
+    Group.findGroupFounder = (group_id) => Group.findOne({
+        attributes: ['founder'],
+        where: {
+            id: group_id,
+          },
+    
+        raw: true,
     });
 
     return Group;

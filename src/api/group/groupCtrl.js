@@ -217,10 +217,13 @@ exports.modifyGroup = async (req, res) => {
     const { body } = req;
     const member = req.decoded;
 
-    const found = await models.GroupInfo.findGroupFounder(group_id);
+    const found = await models.Group.findGroupFounder(body.group_id);
 
     var msg = "";
     var result = {};
+
+    console.log(member);
+    console.log(found)
 
     if (!body.group_id) {
         msg = "group_id가 없습니다.";
@@ -233,12 +236,10 @@ exports.modifyGroup = async (req, res) => {
         };
 
         res.status(400).json(result);
-    } else if(member.member.member_id != found.founder) {
+     } else if(member.id != found.founder) {
+         
         msg = "권한이 없습니다."
-
-        console.log(colors.magenta('Error: ' + msg));
-
-        result = {
+        const result = {
             status: 400,
             message: msg
         }
@@ -284,8 +285,8 @@ exports.delete = async (req, res) => {
     const { group_id } = req.body;
     const member = req.decoded;
 
-    const found = await models.GroupInfo.findGroupFounder(group_id);
-
+    const found = await models.Group.findGroupFounder(group_id);
+    
     var msg = "";
     var result = {};
 
@@ -300,12 +301,10 @@ exports.delete = async (req, res) => {
         };
 
         res.status(400).json(result);
-    } else if(member.member.member_id != found.founder) {
+    } else if(member.id != found.founder) {
+        
         msg = "권한이 없습니다."
-
-        console.log(colors.magenta('Error: ' + msg));
-
-        result = {
+        const result = {
             status: 400,
             message: msg
         }
