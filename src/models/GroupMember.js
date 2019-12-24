@@ -31,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
     };
 
     GroupMember.getMembers = (group_id) => GroupMember.findAll({
+        attributes: ['id', 'is_admin', 'member_status', 'group_id', 'member_id'],
         where: {
             group_id: group_id
         }
