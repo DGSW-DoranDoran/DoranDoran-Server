@@ -1,12 +1,16 @@
 const axios = require('axios');
 
 const slack = async (ctx) => {
-    var text = `Date: ${Date()}\nStatus: ${ctx.status}\nMessage: ${ctx.message}`;
+    var text = `Date: ${Date()}\n
+                Status: ${ctx.status}\n
+                Message: ${ctx.message}\n
+                body: ${ctx.body}\n
+                query: ${ctx.query}`;
 
     try {
         await axios({
             method: "POST",
-            url: "https://hooks.slack.com/services/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",
+            url: "https://hooks.slack.com/services/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",
             contentType: 'application/json',
             data: JSON.stringify({
                 text: text
