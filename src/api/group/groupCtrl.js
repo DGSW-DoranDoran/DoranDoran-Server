@@ -358,3 +358,66 @@ exports.delete = async (req, res) => {
 
     slack(result);
 };
+
+exports.joinGroup = async (req, res) => {
+    console.log(colors.green('[GET] Get Groups'));
+
+    const { group_id } = req.body;
+    const member = req.decoded;
+
+    let result = {};
+    let InsertResult = {};
+
+    try {
+        if (!group_id) {
+            msg = "group_id가 없습니다.";
+
+            console.log(colors.magenta('Error: ' + msg));
+
+            result = {
+                status: 400,
+                message: msg
+            };
+
+            res.status(400).json(result);
+        }
+        else if(!group_id) {
+
+        } else {
+            const join = {
+                isAdmin: 0,
+                member_status: 0,
+                group_id: group_id,
+                member_id: member.id
+            };
+
+            InsertResult = await models.GroupMember.join(join);
+
+            const msg = "신청 성공";
+
+            result = {
+                status: 200,
+                message: msg,
+                data: {
+                    InsertResult
+                }
+            };
+
+            res.status(200).json(result);
+        };
+    } catch (error) {
+        msg = "서버 에러";
+
+        console.log(colors.red('ServerError: ' + error));
+
+        result = {
+            status: 500,
+            message: msg,
+            data: {
+                error
+            }
+        };
+
+        res.status(500).json(result);
+    };
+};
