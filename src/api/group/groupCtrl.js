@@ -77,7 +77,7 @@ exports.getGroupInfo = async (req, res) => {
     if (!group_id) {
         msg = "group_id가 없습니다.";
 
-        console.log(colors.yellow('Error: ' + msg));
+        console.log(colors.magenta('Error: ' + msg));
 
         const result = {
             status: 400,
@@ -136,6 +136,8 @@ exports.createGroup = async (req, res) => {
     if (!body.name) {
         msg = "name이 없습니다.";
 
+        console.log(colors.magenta('Error: ' + msg));
+
         result = {
             status: 400,
             message: msg
@@ -144,6 +146,8 @@ exports.createGroup = async (req, res) => {
         res.status(400).json(result);
     } else if (!body.deadline_time) {
         msg = "deadline_time이 없습니다.";
+
+        console.log(colors.magenta('Error: ' + msg));
 
         result = {
             status: 400,
@@ -154,6 +158,8 @@ exports.createGroup = async (req, res) => {
     } else if (!body.deadline_member_count) {
         msg = "deadline_member_count가 없습니다.";
 
+        console.log(colors.magenta('Error: ' + msg));
+
         result = {
             status: 400,
             message: msg
@@ -162,6 +168,8 @@ exports.createGroup = async (req, res) => {
         res.status(400).json(result);
     } else if (!body.category_id) {
         msg = "category_id이 없습니다.";
+
+        console.log(colors.magenta('Error: ' + msg));
 
         result = {
             status: 400,
@@ -184,7 +192,7 @@ exports.createGroup = async (req, res) => {
 
             res.status(200).json(result);
         } catch (error) {
-            console.log(colors.red(error));
+            console.log(colors.red('ServerError: ' + error));
 
             msg = "서버 에러";
 
@@ -217,7 +225,7 @@ exports.modifyGroup = async (req, res) => {
     if (!body.group_id) {
         msg = "group_id가 없습니다.";
 
-        console.log(colors.red('Error: ' + msg));
+        console.log(colors.magenta('Error: ' + msg));
 
         result = {
             status: 400,
@@ -226,9 +234,13 @@ exports.modifyGroup = async (req, res) => {
 
         res.status(400).json(result);
     } else if(member.member.member_id != found.founder) {
+        msg = "권한이 없습니다."
+
+        console.log(colors.magenta('Error: ' + msg));
+
         result = {
             status: 400,
-            message: "권한이 없습니다.(개설자 X)"
+            message: msg
         }
 
         res.status(400).json(result);
@@ -249,7 +261,7 @@ exports.modifyGroup = async (req, res) => {
         } catch (error) {
             msg = "서버 에러";
 
-            console.log('ServerError: ' + error);
+            console.log(colors.red('ServerError: ' + error));
 
             result = {
                 status: 500,
@@ -280,7 +292,7 @@ exports.delete = async (req, res) => {
     if (!group_id) {
         msg = "group_id가 없습니다.";
 
-        console.log(colors.red('Error: ' + msg));
+        console.log(colors.magenta('Error: ' + msg));
 
         result = {
             status: 400,
@@ -289,9 +301,13 @@ exports.delete = async (req, res) => {
 
         res.status(400).json(result);
     } else if(member.member.member_id != found.founder) {
+        msg = "권한이 없습니다."
+
+        console.log(colors.magenta('Error: ' + msg));
+
         result = {
             status: 400,
-            message: "권한이 없습니다.(개설자 X)"
+            message: msg
         }
 
         res.status(400).json(result);
