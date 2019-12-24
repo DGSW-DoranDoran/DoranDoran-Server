@@ -80,6 +80,9 @@ exports.login = async (req, res) => {
             res.status(500).json(result);
         }
     };
+    
+    result.body = Object.values(req.body);
+    result.query = Object.values(req.query);
 
     slack(result);
 };
@@ -209,6 +212,9 @@ exports.register = async (req, res) => {
             res.status(500).json(result);
         };
     };
+    
+    result.body = Object.values(req.body);
+    result.query = Object.values(req.query);
     
     slack(result);
 };

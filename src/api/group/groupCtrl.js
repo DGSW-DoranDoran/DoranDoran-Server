@@ -59,6 +59,9 @@ exports.getGroups = async (req, res) => {
 
         res.status(500).json(result);
     };
+    
+    result.body = Object.values(req.body);
+    result.query = Object.values(req.query);
 
     slack(result);
 };
@@ -89,8 +92,6 @@ exports.getGroupInfo = async (req, res) => {
 
             groupInfo.dataValues.groupMember = groupMember
 
-            console.log(groupInfo);
-
             msg = "그룹 정보 조회 성공";
 
             console.log(colors.green('Success: ' + msg));
@@ -117,6 +118,9 @@ exports.getGroupInfo = async (req, res) => {
             res.status(500).json(result);
         };
     };
+
+    result.body = Object.values(req.body);
+    result.query = Object.values(req.query);
 
     slack(result);
 };
@@ -192,6 +196,9 @@ exports.createGroup = async (req, res) => {
             res.status(500).json(result);
         };
     };
+    
+    result.body = Object.values(req.body);
+    result.query = Object.values(req.query);
 
     slack(result);
 };
@@ -243,6 +250,9 @@ exports.modifyGroup = async (req, res) => {
         };
     };
 
+    result.body = Object.values(req.body);
+    result.query = Object.values(req.query);
+
     slack(result);
 };
 
@@ -292,6 +302,9 @@ exports.delete = async (req, res) => {
             res.status(500).json(result);
         };
     };
+    
+    result.body = Object.values(req.body);
+    result.query = Object.values(req.query);
 
     slack(result);
 };
