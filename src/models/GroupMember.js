@@ -10,6 +10,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             allowNull: false
         },
+        group_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        member_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
         member_status: {
             type: DataTypes.INTEGER,
             allowNull: false
@@ -37,11 +45,11 @@ module.exports = (sequelize, DataTypes) => {
         }
     });
 
-    GroupMember.join = (group_id, member_id, isAdmin, member_status ) => GroupMember.create({
-        group_id: group_id,
-        member_id: member_id,
-        isAdmin: isAdmin,
-        member_status: member_status
+    GroupMember.join = ( data ) => GroupMember.create({
+        isAdmin: data.isAdmin,
+        member_status: data.member_status,
+        group_id: data.group_id,
+        member_id: data.member_id
     });
 
     return GroupMember;

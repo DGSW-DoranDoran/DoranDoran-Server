@@ -179,7 +179,22 @@ exports.createGroup = async (req, res) => {
         res.status(400).json(result);
     } else {
         try {
-            await models.Group.createGroup(body);
+            const member = req.decoded;
+
+            const insertResult = await models.Group.createGroup(body, member.id);
+            console.log(insertResult.founder);
+            console.log(insertResult.id);
+
+            const join = {
+                isAdmin: 1,
+                member_status: 1,
+                group_id: insertResult.id,
+                member_id: member.id
+            };
+
+            console.log(join)
+
+            await models.GroupMember.join(join);
 
             msg = "그룹 생성 성공";
 
