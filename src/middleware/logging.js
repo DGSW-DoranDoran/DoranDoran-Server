@@ -12,9 +12,7 @@ const slack = async (ctx) => {
             method: "POST",
             url: "https://hooks.slack.com/services/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",
             contentType: 'application/json',
-            data: JSON.stringify({
-                text: text
-            })
+            data: JSON.stringify({text: text})
         });
     } catch (error) {
         console.log('Slack: ' + error);

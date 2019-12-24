@@ -1,20 +1,24 @@
 const colors = require('colors');
 const models = require('../../models');
 const jwt = require('../../lib/token');
+const slack = require('../../middleware/logging');
 
 exports.login = async (req, res) => {
     console.log(colors.yellow('[POST] Login'));
 
     const { id, password } = req.body;
 
+    console.log(req);
+
     var msg = "";
+    var result = {};
 
     if (!id) {
         msg = "id가 없습니다.";
 
-        console.log(colors.yellow('Error: ' + msg));
+        console.log(colors.magenta('Error: ' + msg));
 
-        const result = {
+        result = {
             status: 400,
             message: msg
         };
@@ -23,9 +27,9 @@ exports.login = async (req, res) => {
     } else if (!password) {
         msg = "password가 없습니다.";
 
-        console.log(colors.yellow('Error: ' + msg));
+        console.log(colors.magenta('Error: ' + msg));
 
-        const result = {
+        result = {
             status: 400,
             message: msg
         };
@@ -38,9 +42,9 @@ exports.login = async (req, res) => {
             if (!member) {
                 msg = 'id 또는 password가 잘못되었습니다.';
 
-                console.log(colors.yellow('Error: ' + msg));
+                console.log(colors.magenta('Error: ' + msg));
 
-                const result = {
+                result = {
                     status: 403,
                     message: msg
                 };
@@ -51,9 +55,9 @@ exports.login = async (req, res) => {
 
                 console.log(colors.green('Success: ', msg));
 
-                const token = jwt.encodeToken(member.id, member.name);
+                const token = jwt.createToken(member);
 
-                const result = {
+                result = {
                     status: 200,
                     message: msg,
                     data: {
@@ -69,7 +73,7 @@ exports.login = async (req, res) => {
 
             console.log(colors.red('ServerError: ' + error));
 
-            const result = {
+            result = {
                 status: 500,
                 message: msg
             };
@@ -90,13 +94,14 @@ exports.register = async (req, res) => {
     const { body } = req;
 
     var msg = "";
+    var result = {};
 
     if (!body.id) {
         msg = "id가 없습니다.";
 
-        console.log(colors.yellow('Error: ' + msg));
+        console.log(colors.magenta('Error: ' + msg));
 
-        const result = {
+        result = {
             status: 400,
             message: msg
         };
@@ -105,9 +110,9 @@ exports.register = async (req, res) => {
     } else if (!body.password) {
         msg = "password가 없습니다.";
 
-        console.log(colors.yellow('Error: ' + msg));
+        console.log(colors.magenta('Error: ' + msg));
 
-        const result = {
+        result = {
             status: 400,
             message: msg
         };
@@ -116,9 +121,9 @@ exports.register = async (req, res) => {
     } else if (!body.name) {
         msg = "name이 없습니다.";
 
-        console.log(colors.yellow('Error: ' + msg));
+        console.log(colors.magenta('Error: ' + msg));
 
-        const result = {
+        result = {
             status: 400,
             message: msg
         };
@@ -127,9 +132,9 @@ exports.register = async (req, res) => {
     } else if (!body.phone) {
         msg = "phone이 없습니다.";
 
-        console.log(colors.yellow('Error: ' + msg));
+        console.log(colors.magenta('Error: ' + msg));
 
-        const result = {
+        result = {
             status: 400,
             message: msg
         };
@@ -138,9 +143,9 @@ exports.register = async (req, res) => {
     } else if (!body.gender) {
         msg = "gender가 없습니다.";
 
-        console.log(colors.yellow('Error: ' + msg));
+        console.log(colors.magenta('Error: ' + msg));
 
-        const result = {
+        result = {
             status: 400,
             message: msg
         };
@@ -149,9 +154,9 @@ exports.register = async (req, res) => {
     } else if (!body.grade) {
         msg = "grade가 없습니다.";
 
-        console.log(colors.yellow('Error: ' + msg));
+        console.log(colors.magenta('Error: ' + msg));
 
-        const result = {
+        result = {
             status: 400,
             message: msg
         };
@@ -160,9 +165,9 @@ exports.register = async (req, res) => {
     } else if (!body.position) {
         msg = "position이 없습니다.";
 
-        console.log(colors.yellow('Error: ' + msg));
+        console.log(colors.magenta('Error: ' + msg));
 
-        const result = {
+        result = {
             status: 400,
             message: msg
         };
@@ -175,7 +180,7 @@ exports.register = async (req, res) => {
             if (!check) {
                 msg = "회원가입 성공";
 
-                const result = {
+                result = {
                     status: 200,
                     message: msg
                 };
@@ -186,21 +191,21 @@ exports.register = async (req, res) => {
             } else {
                 msg = "이미 등록된 아이디입니다.";
 
-                const result = {
+                console.log(colors.magenta('Error: ' + msg));
+
+                result = {
                     status: 409,
                     message: msg
                 };
 
                 res.status(409).json(result);
-
-                console.log('Error: ' + msg);
             }
         } catch (error) {
             msg = "서버 에러";
 
             console.log(colors.red('ServerError: ' + error));
 
-            const result = {
+            result = {
                 status: 500,
                 message: msg
             };
