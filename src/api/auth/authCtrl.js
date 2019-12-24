@@ -51,7 +51,9 @@ exports.login = async (req, res) => {
 
                 console.log(colors.green('Success: ', msg));
 
-                const token = jwt.encodeToken(member.id, member.name);
+                const token = await jwt.createToken(member.id, member.name);
+
+                console.log(token);
 
                 const result = {
                     status: 200,

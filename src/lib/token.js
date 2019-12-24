@@ -4,9 +4,10 @@ const jwt = require('jsonwebtoken');
 const secret = require('../config/secretToken.json');
 
 // Create Token
-exports.createToken = async (member) => {
+exports.createToken = async (id, name) => {
     const payload = {
-      member,
+      id,
+      name
     };
     const option = { expiresIn: '5 days', issuer: 'doran.b1nd.com', subject: 'token' };
     console.log(payload);
@@ -19,9 +20,10 @@ exports.createToken = async (member) => {
   };
   
   // Create Refresh Token
-  exports.createRefreshToken = async (member) => {
+  exports.createRefreshToken = async (id, name) => {
     const payload = {
-      member,
+      id,
+      name
     };
     const option = { expiresIn: '5 days', issuer: 'doran.b1nd.com', subject: 'token' };
   
