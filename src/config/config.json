@@ -6,6 +6,5 @@
         "host": "localhost",
         "dialect": "mysql",
         "logging": false
-    },
-    "secret": "DoRaNdOrAn"
+    }
 }

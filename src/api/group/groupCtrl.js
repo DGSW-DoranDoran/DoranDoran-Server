@@ -1,6 +1,5 @@
 const colors = require('colors');
 const models = require('../../models');
-const slack = require('../../middleware/logging');
 
 exports.getGroups = async (req, res) => {
     console.log(colors.green('[GET] Get Groups'));
@@ -8,7 +7,6 @@ exports.getGroups = async (req, res) => {
     const { category_id } = req.query;
 
     var msg = "";
-    var result = {};
 
     try {
         if (!category_id) {
@@ -18,7 +16,7 @@ exports.getGroups = async (req, res) => {
 
             console.log(colors.green('Success: ' + msg));
 
-            result = {
+            const result = {
                 status: 200,
                 message: msg,
                 data: {
@@ -34,7 +32,7 @@ exports.getGroups = async (req, res) => {
 
             console.log(colors.green('Success: ' + msg));
 
-            result = {
+            const result = {
                 status: 200,
                 message: msg,
                 data: {
@@ -49,7 +47,7 @@ exports.getGroups = async (req, res) => {
 
         console.log(colors.red('ServerError: ' + error));
 
-        result = {
+        const result = {
             status: 500,
             message: msg,
             data: {
@@ -72,14 +70,13 @@ exports.getGroupInfo = async (req, res) => {
     const { group_id } = req.query;
 
     var msg = "";
-    var result = {};
 
     if (!group_id) {
         msg = "group_id가 없습니다.";
 
         console.log(colors.yellow('Error: ' + msg));
 
-        result = {
+        const result = {
             status: 400,
             message: msg
         };
@@ -96,7 +93,7 @@ exports.getGroupInfo = async (req, res) => {
 
             console.log(colors.green('Success: ' + msg));
 
-            result = {
+            const result = {
                 status: 200,
                 message: msg,
                 data: {
@@ -110,7 +107,7 @@ exports.getGroupInfo = async (req, res) => {
 
             console.log(colors.red('ServerError: ' + error));
 
-            result = {
+            const result = {
                 status: 500,
                 message: msg
             };
@@ -131,12 +128,11 @@ exports.createGroup = async (req, res) => {
     const { body } = req;
 
     var msg = "";
-    var result = {};
 
     if (!body.name) {
         msg = "name이 없습니다.";
 
-        result = {
+        const result = {
             status: 400,
             message: msg
         };
@@ -145,7 +141,7 @@ exports.createGroup = async (req, res) => {
     } else if (!body.deadline_time) {
         msg = "deadline_time이 없습니다.";
 
-        result = {
+        const result = {
             status: 400,
             message: msg
         };
@@ -154,7 +150,7 @@ exports.createGroup = async (req, res) => {
     } else if (!body.deadline_member_count) {
         msg = "deadline_member_count가 없습니다.";
 
-        result = {
+        const result = {
             status: 400,
             message: msg
         };
@@ -163,7 +159,7 @@ exports.createGroup = async (req, res) => {
     } else if (!body.category_id) {
         msg = "category_id이 없습니다.";
 
-        result = {
+        const result = {
             status: 400,
             message: msg
         };
@@ -177,7 +173,7 @@ exports.createGroup = async (req, res) => {
 
             console.log(colors.green('Success: ' + msg));
 
-            result = {
+            const result = {
                 status: 200,
                 message: msg
             };
@@ -188,7 +184,7 @@ exports.createGroup = async (req, res) => {
 
             msg = "서버 에러";
 
-            result = {
+            const result = {
                 status: 500,
                 message: msg
             };
@@ -207,19 +203,28 @@ exports.modifyGroup = async (req, res) => {
     console.log(colors.blue('[PUT] Modify Group'));
 
     const { body } = req;
+    const member = req.decoded;
+
+    const found = await models.GroupInfo.findGroupFounder(group_id);
 
     var msg = "";
-    var result = {};
 
     if (!body.group_id) {
         msg = "group_id가 없습니다.";
 
         console.log(colors.red('Error: ' + msg));
 
-        result = {
+        const result = {
             status: 400,
             message: msg
         };
+
+        res.status(400).json(result);
+    } else if(member.member.member_id != found.founder) {
+        const result = {
+            status: 400,
+            message: "권한이 없습니다.(개설자 X)"
+        }
 
         res.status(400).json(result);
     } else {
@@ -230,7 +235,7 @@ exports.modifyGroup = async (req, res) => {
 
             console.log(colors.green('Success: ' + msg));
 
-            result = {
+            const result = {
                 status: 200,
                 message: msg
             };
@@ -241,7 +246,7 @@ exports.modifyGroup = async (req, res) => {
 
             console.log('ServerError: ' + error);
 
-            result = {
+            const result = {
                 status: 500,
                 message: msg
             };
@@ -260,19 +265,28 @@ exports.delete = async (req, res) => {
     console.log(colors.red('[DELETE] Delete Group'));
 
     const { group_id } = req.body;
+    const member = req.decoded;
+
+    const found = await models.GroupInfo.findGroupFounder(group_id);
 
     var msg = "";
-    var result = {};
 
     if (!group_id) {
         msg = "group_id가 없습니다.";
 
         console.log(colors.red('Error: ' + msg));
 
-        result = {
+        const result = {
             status: 400,
             message: msg
         };
+
+        res.status(400).json(result);
+    } else if(member.member.member_id != found.founder) {
+        const result = {
+            status: 400,
+            message: "권한이 없습니다.(개설자 X)"
+        }
 
         res.status(400).json(result);
     } else {
@@ -283,7 +297,7 @@ exports.delete = async (req, res) => {
 
             console.log(colors.green('Success: ' + msg));
 
-            result = {
+            const result = {
                 status: 200,
                 message: msg
             };
@@ -294,7 +308,7 @@ exports.delete = async (req, res) => {
 
             console.log(colors.red('ServerError: ' + error));
 
-            result = {
+            const result = {
                 status: 500,
                 message: msg
             };
