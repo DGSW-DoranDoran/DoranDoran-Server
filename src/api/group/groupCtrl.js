@@ -1,5 +1,6 @@
 const colors = require('colors');
 const models = require('../../models');
+const slack = require('../../middleware/logging');
 
 exports.getGroups = async (req, res) => {
     console.log(colors.green('[GET] Get Groups'));
@@ -7,6 +8,7 @@ exports.getGroups = async (req, res) => {
     const { category_id } = req.query;
 
     var msg = "";
+    var result = {};
 
     try {
         if (!category_id) {
@@ -16,7 +18,7 @@ exports.getGroups = async (req, res) => {
 
             console.log(colors.green('Success: ' + msg));
 
-            const result = {
+            result = {
                 status: 200,
                 message: msg,
                 data: {
@@ -32,7 +34,7 @@ exports.getGroups = async (req, res) => {
 
             console.log(colors.green('Success: ' + msg));
 
-            const result = {
+            result = {
                 status: 200,
                 message: msg,
                 data: {
@@ -47,7 +49,7 @@ exports.getGroups = async (req, res) => {
 
         console.log(colors.red('ServerError: ' + error));
 
-        const result = {
+        result = {
             status: 500,
             message: msg,
             data: {
@@ -57,6 +59,11 @@ exports.getGroups = async (req, res) => {
 
         res.status(500).json(result);
     };
+    
+    result.body = Object.values(req.body);
+    result.query = Object.values(req.query);
+
+    slack(result);
 };
 
 exports.getGroupInfo = async (req, res) => {
@@ -65,11 +72,12 @@ exports.getGroupInfo = async (req, res) => {
     const { group_id } = req.query;
 
     var msg = "";
+    var result = {};
 
     if (!group_id) {
         msg = "group_id가 없습니다.";
 
-        console.log(colors.yellow('Error: ' + msg));
+        console.log(colors.magenta('Error: ' + msg));
 
         const result = {
             status: 400,
@@ -80,12 +88,15 @@ exports.getGroupInfo = async (req, res) => {
     } else {
         try {
             const groupInfo = await models.Group.getGroupInfo(group_id);
+            const groupMember = await models.GroupMember.getMembers(group_id);
+
+            groupInfo.dataValues.groupMember = groupMember
 
             msg = "그룹 정보 조회 성공";
 
             console.log(colors.green('Success: ' + msg));
 
-            const result = {
+            result = {
                 status: 200,
                 message: msg,
                 data: {
@@ -99,17 +110,19 @@ exports.getGroupInfo = async (req, res) => {
 
             console.log(colors.red('ServerError: ' + error));
 
-            const result = {
+            result = {
                 status: 500,
-                message: msg,
-                data: {
-                    error: error
-                }
+                message: msg
             };
 
             res.status(500).json(result);
         };
     };
+
+    result.body = Object.values(req.body);
+    result.query = Object.values(req.query);
+
+    slack(result);
 };
 
 exports.createGroup = async (req, res) => {
@@ -118,11 +131,14 @@ exports.createGroup = async (req, res) => {
     const { body } = req;
 
     var msg = "";
+    var result = {};
 
     if (!body.name) {
         msg = "name이 없습니다.";
 
-        const result = {
+        console.log(colors.magenta('Error: ' + msg));
+
+        result = {
             status: 400,
             message: msg
         };
@@ -131,7 +147,9 @@ exports.createGroup = async (req, res) => {
     } else if (!body.deadline_time) {
         msg = "deadline_time이 없습니다.";
 
-        const result = {
+        console.log(colors.magenta('Error: ' + msg));
+
+        result = {
             status: 400,
             message: msg
         };
@@ -140,7 +158,9 @@ exports.createGroup = async (req, res) => {
     } else if (!body.deadline_member_count) {
         msg = "deadline_member_count가 없습니다.";
 
-        const result = {
+        console.log(colors.magenta('Error: ' + msg));
+
+        result = {
             status: 400,
             message: msg
         };
@@ -149,7 +169,9 @@ exports.createGroup = async (req, res) => {
     } else if (!body.category_id) {
         msg = "category_id이 없습니다.";
 
-        const result = {
+        console.log(colors.magenta('Error: ' + msg));
+
+        result = {
             status: 400,
             message: msg
         };
@@ -163,18 +185,18 @@ exports.createGroup = async (req, res) => {
 
             console.log(colors.green('Success: ' + msg));
 
-            const result = {
+            result = {
                 status: 200,
                 message: msg
             };
 
             res.status(200).json(result);
         } catch (error) {
-            console.log(colors.red(error));
+            console.log(colors.red('ServerError: ' + error));
 
             msg = "서버 에러";
 
-            const result = {
+            result = {
                 status: 500,
                 message: msg
             };
@@ -182,6 +204,11 @@ exports.createGroup = async (req, res) => {
             res.status(500).json(result);
         };
     };
+    
+    result.body = Object.values(req.body);
+    result.query = Object.values(req.query);
+
+    slack(result);
 };
 
 exports.modifyGroup = async (req, res) => {
@@ -193,6 +220,7 @@ exports.modifyGroup = async (req, res) => {
     const found = await models.Group.findGroupFounder(body.group_id);
 
     var msg = "";
+    var result = {};
 
     console.log(member);
     console.log(found)
@@ -200,18 +228,20 @@ exports.modifyGroup = async (req, res) => {
     if (!body.group_id) {
         msg = "group_id가 없습니다.";
 
-        console.log(colors.red('Error: ' + msg));
+        console.log(colors.magenta('Error: ' + msg));
 
-        const result = {
+        result = {
             status: 400,
             message: msg
         };
 
         res.status(400).json(result);
      } else if(member.id != found.founder) {
+         
+        msg = "권한이 없습니다."
         const result = {
             status: 400,
-            message: "권한이 없습니다.(개설자 X)"
+            message: msg
         }
 
         res.status(400).json(result);
@@ -223,7 +253,7 @@ exports.modifyGroup = async (req, res) => {
 
             console.log(colors.green('Success: ' + msg));
 
-            const result = {
+            result = {
                 status: 200,
                 message: msg
             };
@@ -232,9 +262,9 @@ exports.modifyGroup = async (req, res) => {
         } catch (error) {
             msg = "서버 에러";
 
-            console.log('ServerError: ' + error);
+            console.log(colors.red('ServerError: ' + error));
 
-            const result = {
+            result = {
                 status: 500,
                 message: msg
             };
@@ -242,6 +272,11 @@ exports.modifyGroup = async (req, res) => {
             res.status(500).json(result);
         };
     };
+
+    result.body = Object.values(req.body);
+    result.query = Object.values(req.query);
+
+    slack(result);
 };
 
 exports.delete = async (req, res) => {
@@ -253,22 +288,25 @@ exports.delete = async (req, res) => {
     const found = await models.Group.findGroupFounder(group_id);
     
     var msg = "";
+    var result = {};
 
     if (!group_id) {
         msg = "group_id가 없습니다.";
 
-        console.log(colors.red('Error: ' + msg));
+        console.log(colors.magenta('Error: ' + msg));
 
-        const result = {
+        result = {
             status: 400,
             message: msg
         };
 
         res.status(400).json(result);
     } else if(member.id != found.founder) {
+        
+        msg = "권한이 없습니다."
         const result = {
             status: 400,
-            message: "권한이 없습니다.(개설자 X)"
+            message: msg
         }
 
         res.status(400).json(result);
@@ -280,7 +318,7 @@ exports.delete = async (req, res) => {
 
             console.log(colors.green('Success: ' + msg));
 
-            const result = {
+            result = {
                 status: 200,
                 message: msg
             };
@@ -291,7 +329,7 @@ exports.delete = async (req, res) => {
 
             console.log(colors.red('ServerError: ' + error));
 
-            const result = {
+            result = {
                 status: 500,
                 message: msg
             };
@@ -299,4 +337,9 @@ exports.delete = async (req, res) => {
             res.status(500).json(result);
         };
     };
+    
+    result.body = Object.values(req.body);
+    result.query = Object.values(req.query);
+
+    slack(result);
 };

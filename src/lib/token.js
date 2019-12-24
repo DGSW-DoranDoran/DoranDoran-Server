@@ -10,7 +10,6 @@ exports.createToken = async (id, name) => {
       name
     };
     const option = { expiresIn: '5 days', issuer: 'doran.b1nd.com', subject: 'token' };
-    console.log(payload);
     
     try {
       return await jwt.sign(payload, secret.key, option);
