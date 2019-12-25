@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true
         },
         isAdmin: {
+            field: 'is_admin',
             type: DataTypes.BOOLEAN,
             allowNull: false
         },
@@ -53,21 +54,65 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     GroupMember.checkDistinct = async (group_id, member_id) => {
-        const checkValue = await GroupMember.findAll({
+        try {
+            const checkValue = await GroupMember.findAll({
+                where: {
+                    group_id,
+                    member_id,
+                },
+                raw: true,
+            });
+    
+            if (checkValue.length > 0) {
+                return false;
+            }
+
+            return true;
+        } catch (error) {
+            msg = "서버 에러";
+
+            console.log(colors.red('ServerError: ' + error));
+
+            result = {
+                status: 500,
+                message: msg
+            };
+
+            res.status(500).json(result);
+        };
+    }
+
+    GroupMember.checkFounder = async (group_id, member_id) => {
+        try {
+            if (!checkValue) {
+                return null;
+            }
+    
+            if (checkValue.isAdmin !== 1) {
+                return false;
+            }
+    
+            return true;
+        } catch (error) {
+            msg = "서버 에러";
+
+            console.log(colors.red('ServerError: ' + error));
+
+            result = {
+                status: 500,
+                message: msg
+            };
+
+            res.status(500).json(result);
+        };
+        const checkValue = await GroupMember.findOne({
             where: {
-                group_id,
+                group_id, 
                 member_id,
             },
+
             raw: true,
         });
-
-        console.log(checkValue);
-
-        if (checkValue.length > 0) {
-            return false;
-        }
-
-        return true;
     }
 
     return GroupMember;

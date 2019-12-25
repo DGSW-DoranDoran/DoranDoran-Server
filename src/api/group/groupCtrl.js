@@ -437,3 +437,74 @@ exports.joinGroup = async (req, res) => {
         res.status(500).json(result);
     };
 };
+
+exports.accecptJoin = async (req, res) => {
+    console.log(colors.green('[GET] Get Groups'));
+
+    const { group_id, member_id } = req.body;
+    const member = req.decoded;
+
+    let result = {};
+    let InsertResult = {};
+
+    console.log(group_id);
+    console.log(member.id);
+
+    const checkFounder = await models.GroupMember.checkFounder(group_id, member.id);
+
+    console.log(checkFounder);
+
+    try {
+        if (!group_id) {
+            msg = "group_id가 없습니다.";
+
+            console.log(colors.magenta('Error: ' + msg));
+
+            result = {
+                status: 400,
+                message: msg
+            };
+
+            res.status(400).json(result);
+        } else if(!member_id) {
+            msg = "member_id 없습니다.";
+
+            console.log(colors.magenta('Error: ' + msg));
+
+            result = {
+                status: 400,
+                message: msg
+            };
+
+            res.status(400).json(result);
+        } else if(!checkFounder) {
+            msg = "신청한 유저가 아닙니다";
+
+            console.log(colors.magenta('Error: ' + msg));
+
+            result = {
+                status: 403,
+                message: msg
+            };
+
+            res.status(403).json(result);
+        }
+        else {
+            
+        };
+    } catch (error) {
+        msg = "서버 에러";
+
+        console.log(colors.red('ServerError: ' + error));
+
+        result = {
+            status: 500,
+            message: msg,
+            data: {
+                error
+            }
+        };
+
+        res.status(500).json(result);
+    };
+};

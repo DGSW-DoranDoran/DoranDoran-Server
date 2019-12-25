@@ -6,7 +6,7 @@ const commentCtrl = require('./commentCtrl');
 router.get('/groups', groupCtrl.getGroups);
 router.get('/info', groupCtrl.getGroupInfo);
 router.post('/create', middleWareAuth, groupCtrl.createGroup);
-router.post('/join', middleWareAuth, groupCtrl.joinGroup);
+router.post('/join', middleWareAuth, groupCtrl.joinGroup);router.post('/accept', middleWareAuth, groupCtrl.accecptJoin);
 router.put('/modify', middleWareAuth, groupCtrl.modifyGroup);
 router.delete('/delete', middleWareAuth, groupCtrl.delete);
 
