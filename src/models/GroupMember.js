@@ -84,6 +84,15 @@ module.exports = (sequelize, DataTypes) => {
 
     GroupMember.checkFounder = async (group_id, member_id) => {
         try {
+            const checkValue = await GroupMember.findOne({
+                where: {
+                    group_id, 
+                    member_id,
+                },
+    
+                raw: true,
+            });
+
             if (!checkValue) {
                 return null;
             }
@@ -105,14 +114,6 @@ module.exports = (sequelize, DataTypes) => {
 
             res.status(500).json(result);
         };
-        const checkValue = await GroupMember.findOne({
-            where: {
-                group_id, 
-                member_id,
-            },
-
-            raw: true,
-        });
     }
 
     return GroupMember;
