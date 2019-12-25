@@ -178,6 +178,8 @@ exports.register = async (req, res) => {
             const check = await models.Member.DuplicateCheck(body.id);
 
             if (!check) {
+                await models.Member.register(body);
+
                 msg = "회원가입 성공";
 
                 result = {

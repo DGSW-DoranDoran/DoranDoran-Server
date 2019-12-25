@@ -476,8 +476,8 @@ exports.accecptJoin = async (req, res) => {
             };
 
             res.status(400).json(result);
-        } else if(!member_id) {
-            msg = "member_id 없습니다.";
+        } else if(checkFounder === false) {
+            msg = "권한이 없습니다.(개설자 X)";
 
             console.log(colors.magenta('Error: ' + msg));
 
@@ -487,7 +487,7 @@ exports.accecptJoin = async (req, res) => {
             };
 
             res.status(400).json(result);
-        } else if(!checkFounder) {
+        } else if(checkFounder === null) {
             msg = "신청한 유저가 아닙니다";
 
             console.log(colors.magenta('Error: ' + msg));
@@ -500,7 +500,20 @@ exports.accecptJoin = async (req, res) => {
             res.status(403).json(result);
         }
         else {
-            
+            InsertResult = await models.GroupMember.updateMemberStatus(group_id, member_id);
+
+            if(InsertResult != undefined) {
+                res.status(500).json(InsertResult);
+            }
+
+            msg = "신청을 수락했습니다";
+
+            result = {
+                status: 200,
+                message: msg,
+            };
+
+            res.status(200).json(result);
         };
     } catch (error) {
         msg = "서버 에러";

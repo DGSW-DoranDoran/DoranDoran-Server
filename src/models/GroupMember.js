@@ -78,7 +78,7 @@ module.exports = (sequelize, DataTypes) => {
                 message: msg
             };
 
-            res.status(500).json(result);
+            return result;
         };
     }
 
@@ -112,7 +112,39 @@ module.exports = (sequelize, DataTypes) => {
                 message: msg
             };
 
-            res.status(500).json(result);
+            return result;
+        };
+    }
+
+    GroupMember.updateMemberStatus = async (group_id, member_id) => {
+        try {
+            const result = await GroupMember.findOne({
+                where: {
+                    group_id,
+                    member_id,
+                },
+            });
+    
+            await GroupMember.update({
+                member_status: 1
+            }, {
+                where: {
+                    id: result.id,
+                },
+    
+                raw: true,
+            });
+        } catch (error) {
+            msg = "서버 에러";
+
+            console.log(colors.red('ServerError: ' + error));
+
+            result = {
+                status: 500,
+                message: msg
+            };
+
+            return result;
         };
     }
 
