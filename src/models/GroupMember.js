@@ -52,5 +52,23 @@ module.exports = (sequelize, DataTypes) => {
         member_id: data.member_id
     });
 
+    GroupMember.checkDistinct = async (group_id, member_id) => {
+        const checkValue = await GroupMember.findAll({
+            where: {
+                group_id,
+                member_id,
+            },
+            raw: true,
+        });
+
+        console.log(checkValue);
+
+        if (checkValue.length > 0) {
+            return false;
+        }
+
+        return true;
+    }
+
     return GroupMember;
 };

@@ -368,6 +368,13 @@ exports.joinGroup = async (req, res) => {
     let result = {};
     let InsertResult = {};
 
+    console.log(group_id);
+    console.log(member.id);
+
+    const checkDistinct = await models.GroupMember.checkDistinct(group_id, member.id);
+
+    console.log(checkDistinct);
+
     try {
         if (!group_id) {
             msg = "group_id가 없습니다.";
@@ -381,8 +388,17 @@ exports.joinGroup = async (req, res) => {
 
             res.status(400).json(result);
         }
-        else if(!group_id) {
+        else if(!checkDistinct) {
+            msg = "이미 신청중인 그룹입니다.";
 
+            console.log(colors.magenta('Error: ' + msg));
+
+            result = {
+                status: 403,
+                message: msg
+            };
+
+            res.status(403).json(result);
         } else {
             const join = {
                 isAdmin: 0,
