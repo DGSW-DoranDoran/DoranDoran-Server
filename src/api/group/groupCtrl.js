@@ -12,7 +12,17 @@ exports.getGroups = async (req, res) => {
 
     try {
         if (!category_id) {
+            const retVal = [];
             const groups = await models.Group.getAllGroups();
+
+            for (let index = 0; index < groups.length; index += 1) {
+                const group = groups[index];
+                const groupMember = await models.GroupMember.getMembers(group.id);
+                group.members = groupMember;
+                group.dataValues.member_count = groupMember.length;
+
+                groups[index] = group;
+            }
 
             msg = "전체 그룹 조회 성공";
 

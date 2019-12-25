@@ -35,6 +35,15 @@ module.exports = (sequelize, DataTypes) => {
         comment: data.comment
     });
 
+    Comment.modify = (data) => Comment.update({
+        commnet: data.comment
+    }, {
+        where: {
+            group_id: data.group_id,
+            member_id: data.member_id
+        }
+    })
+
     Comment.delete = (comment_id) => Comment.destroy({
         where: {
             id: comment_id
