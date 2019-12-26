@@ -73,7 +73,7 @@ exports.getGroups = async (req, res) => {
 
         res.status(500).json(result);
     };
-    
+
     result.body = Object.values(req.body);
     result.query = Object.values(req.query);
 
@@ -106,21 +106,36 @@ exports.getGroupInfo = async (req, res) => {
             const groupInfo = await models.Group.getGroupInfo(group_id);
             const groupMember = await models.GroupMember.getMembers(group_id);
 
-            groupInfo.dataValues.groupMember = groupMember
+            console.log(groupInfo);
 
-            msg = "그룹 정보 조회 성공";
+            if (!groupInfo) {
+                msg = "없는 그룹입니다.";
 
-            console.log(colors.green('Success: ' + msg));
+                console.log(colors.magenta("Error: " + msg));
 
-            result = {
-                status: 200,
-                message: msg,
-                data: {
-                    groupInfo
+                result = {
+                    status: 1000,
+                    message: msg
                 }
-            };
 
-            res.status(200).json(result);
+                res.status(1000).json(result);
+            } else {
+                groupInfo.dataValues.groupMember = groupMember
+
+                msg = "그룹 정보 조회 성공";
+
+                console.log(colors.green('Success: ' + msg));
+
+                result = {
+                    status: 200,
+                    message: msg,
+                    data: {
+                        groupInfo
+                    }
+                };
+
+                res.status(200).json(result);
+            }
         } catch (error) {
             msg = "서버 에러";
 
@@ -199,7 +214,7 @@ exports.createGroup = async (req, res) => {
         try {
             const member = req.decoded;
 
-            if (req.file !== undefined){
+            if (req.file !== undefined) {
                 body.image = req.file.path;
             }
 
@@ -237,7 +252,7 @@ exports.createGroup = async (req, res) => {
             res.status(500).json(result);
         };
     };
-    
+
     result.body = Object.values(req.body);
     result.query = Object.values(req.query);
 
@@ -268,8 +283,8 @@ exports.modifyGroup = async (req, res) => {
         };
 
         res.status(400).json(result);
-     } else if(member.id != found.founder) {
-         
+    } else if (member.id != found.founder) {
+
         msg = "권한이 없습니다."
         const result = {
             status: 400,
@@ -321,7 +336,7 @@ exports.delete = async (req, res) => {
     console.log(body);
 
     const found = await models.Group.findGroupFounder(group_id);
-    
+
     var msg = "";
     var result = {};
 
@@ -336,8 +351,8 @@ exports.delete = async (req, res) => {
         };
 
         res.status(400).json(result);
-    } else if(member.id != found.founder) {
-        
+    } else if (member.id != found.founder) {
+
         msg = "권한이 없습니다."
         const result = {
             status: 400,
@@ -372,7 +387,7 @@ exports.delete = async (req, res) => {
             res.status(500).json(result);
         };
     };
-    
+
     result.body = Object.values(req.body);
     result.query = Object.values(req.query);
 
@@ -410,7 +425,7 @@ exports.joinGroup = async (req, res) => {
 
             res.status(400).json(result);
         }
-        else if(!checkDistinct) {
+        else if (!checkDistinct) {
             msg = "이미 신청중인 그룹입니다.";
 
             console.log(colors.magenta('Error: ' + msg));
@@ -487,7 +502,7 @@ exports.accecptJoin = async (req, res) => {
             };
 
             res.status(400).json(result);
-        } else if(checkFounder === false) {
+        } else if (checkFounder === false) {
             msg = "권한이 없습니다.(개설자 X)";
 
             console.log(colors.magenta('Error: ' + msg));
@@ -498,7 +513,7 @@ exports.accecptJoin = async (req, res) => {
             };
 
             res.status(400).json(result);
-        } else if(checkFounder === null) {
+        } else if (checkFounder === null) {
             msg = "신청한 유저가 아닙니다";
 
             console.log(colors.magenta('Error: ' + msg));
@@ -513,7 +528,7 @@ exports.accecptJoin = async (req, res) => {
         else {
             InsertResult = await models.GroupMember.updateMemberStatus(group_id, member_id);
 
-            if(InsertResult != undefined) {
+            if (InsertResult != undefined) {
                 res.status(500).json(InsertResult);
             }
 
