@@ -9,7 +9,10 @@ router.post('/create', middleWareAuth, groupCtrl.createGroup);
 router.post('/join', middleWareAuth, groupCtrl.joinGroup);
 router.put('/accept', middleWareAuth, groupCtrl.accecptJoin);
 router.put('/modify', middleWareAuth, groupCtrl.modifyGroup);
+router.put('/trans', middleWareAuth, groupCtrl.transferAdmin);
 router.delete('/delete', middleWareAuth, groupCtrl.delete);
+router.delete('/secession', middleWareAuth, groupCtrl.secession);
+
 
 router.get('/comment', commentCtrl.getComments);
 router.post('/comment', commentCtrl.write);

@@ -1,3 +1,5 @@
+const colors = require('colors');
+
 module.exports = (sequelize, DataTypes) => {
     const GroupMember = sequelize.define('GroupMember', {
         id: {
@@ -65,11 +67,85 @@ module.exports = (sequelize, DataTypes) => {
                 },
                 raw: true,
             });
+
+            console.log(checkValue);
     
             if (checkValue.length > 0) {
                 return false;
             }
 
+            return true;
+        } catch (error) {
+            msg = "서버 에러";
+
+            console.log(colors.red('ServerError: ' + error));
+
+            result = {
+                status: 500,
+                message: msg
+            };
+
+            return result;
+        };
+    }
+
+    GroupMember.checkFounder = async (group_id, member_id) => {
+        try {
+            const checkValue = await GroupMember.findOne({
+                where: {
+                    group_id, 
+                    member_id,
+                },
+    
+                raw: true,
+            });
+
+            if(!checkValue)
+            {
+                return false;
+            }
+    
+            if (checkValue.isAdmin !== 1) {
+                return false;
+            }
+    
+            return true;
+        } catch (error) {
+            msg = "서버 에러";
+
+            console.log(colors.red('ServerError: ' + error));
+
+            result = {
+                status: 500,
+                message: msg
+            };
+
+            return result;
+        };
+    }
+
+    GroupMember.checkMember = async (group_id, member_id) => {
+        try {
+            const checkValue = await GroupMember.findOne({
+                where: {
+                    group_id, 
+                    member_id,
+                },
+    
+                raw: true,
+            });
+
+            console.log("빠나나");
+            console.log(checkValue);
+
+            if (!checkValue) {
+                return null;
+            }
+    
+            if (checkValue.member_status === 1) {
+                return false;
+            }
+    
             return true;
         } catch (error) {
             msg = "서버 에러";
@@ -116,6 +192,72 @@ module.exports = (sequelize, DataTypes) => {
             return result;
         };
     }
+
+    GroupMember.transferAdmin = async (group_id, member_id) => {
+        try {
+            const member = await GroupMember.findOne({
+                where: {
+                    group_id,
+                    member_id,
+                },
+
+                raw: true,
+            });
+
+            const founder = await GroupMember.findOne({
+                where: {
+                    group_id,
+                    is_admin: 1,
+                },
+
+                raw: true,
+            });
+
+            console.log(member_id);
+            console.log(founder);
+            console.log(member);
+    
+            await GroupMember.update({
+                isAdmin: 1
+            }, {
+                where: {
+                    id: member.id
+                },
+    
+                raw: true,
+            });
+
+            await GroupMember.update({
+                isAdmin: 0
+            }, {
+                where: {
+                    id: founder.id,
+                },
+    
+                raw: true,
+            });
+        } catch (error) {
+            msg = "서버 에러";
+
+            console.log(colors.red('ServerError: ' + error));
+
+            result = {
+                status: 500,
+                message: msg
+            };
+
+            return result;
+        };
+    };
+
+    GroupMember.secession = (group_id, member_id) => GroupMember.destroy({
+        where: {
+            group_id,
+            member_id,
+        },
+
+        raw: true,
+    });
 
     return GroupMember;
 };
