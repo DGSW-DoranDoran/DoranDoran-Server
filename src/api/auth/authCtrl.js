@@ -8,6 +8,8 @@ exports.login = async (req, res) => {
 
     const { id, password } = req.body;
 
+    console.log(req.body);
+
     var msg = "";
     var result = {};
 
@@ -138,7 +140,7 @@ exports.register = async (req, res) => {
         };
 
         res.status(400).json(result);
-    } else if (!body.gender) {
+    } else if (body.gender === undefined) {
         msg = "gender가 없습니다.";
 
         console.log(colors.magenta('Error: ' + msg));
@@ -149,7 +151,7 @@ exports.register = async (req, res) => {
         };
 
         res.status(400).json(result);
-    } else if (!body.grade) {
+    } else if (body.grade === undefined) {
         msg = "grade가 없습니다.";
 
         console.log(colors.magenta('Error: ' + msg));
@@ -176,6 +178,7 @@ exports.register = async (req, res) => {
             const check = await models.Member.DuplicateCheck(body.id);
 
             if (!check) {
+                body.image = req.file.path;
                 await models.Member.register(body);
 
                 msg = "회원가입 성공";
