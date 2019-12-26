@@ -221,3 +221,76 @@ exports.register = async (req, res) => {
     
     slack(result);
 };
+
+exports.findInfo = async (req, res) => {
+    console.log(colors.yellow('[GET] info'));
+
+    const { member_id } = req.body;
+
+    var msg = "";
+    var result = {};
+
+    if (!member_id) {
+        msg = "member_id가 없습니다.";
+
+        console.log(colors.magenta('Error: ' + msg));
+
+        result = {
+            status: 400,
+            message: msg
+        };
+
+        res.status(400).json(result);
+    } else {
+        try {
+            const info = await models.Member.findInfo(member_id);
+            const groupInfo = await models.GroupMember.getMyInfo(member_id);
+
+            if (!info) {
+                msg = '잘못된 id입니다.';
+
+                console.log(colors.magenta('Error: ' + msg));
+
+                result = {
+                    status: 403,
+                    message: msg
+                };
+
+                res.status(403).json(result);
+            } else {
+                msg = '조회 성공';
+
+                console.log(colors.green('Success: ', msg));
+
+                result = {
+                    status: 200,
+                    message: msg,
+                    data: {
+                        info: info,
+                        group: {
+                            groupInfo: groupInfo
+                        }
+                    }
+                };
+
+                res.status(200).json(result);
+            }
+        } catch (error) {
+            msg = '서버 에러';
+
+            console.log(colors.red('ServerError: ' + error));
+
+            result = {
+                status: 500,
+                message: msg
+            };
+
+            res.status(500).json(result);
+        }
+    };
+    
+    result.body = Object.values(req.body);
+    result.query = Object.values(req.query);
+
+    slack(result);
+};

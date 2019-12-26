@@ -46,6 +46,13 @@ module.exports = (sequelize, DataTypes) => {
         }
     });
 
+    GroupMember.getMyInfo = (member_id) => GroupMember.findAll({
+        attributes: ['is_admin', 'member_status', 'group_id'],
+        where: {
+            member_id: member_id
+        }
+    });
+
     GroupMember.join = ( data ) => GroupMember.create({
         isAdmin: data.isAdmin,
         member_status: data.member_status,
