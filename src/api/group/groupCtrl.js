@@ -1,11 +1,14 @@
 const colors = require('colors');
 const models = require('../../models');
 const slack = require('../../middleware/logging');
+const moment = require('moment');
 
 exports.getGroups = async (req, res) => {
     console.log(colors.green('[GET] Get Groups'));
 
     const { category_id } = req.query;
+
+    console.log(req.query);
 
     var msg = "";
     var result = {};
@@ -19,6 +22,8 @@ exports.getGroups = async (req, res) => {
                 const groupMember = await models.GroupMember.getMembers(group.id);
                 group.members = groupMember;
                 group.dataValues.member_count = groupMember.length;
+                group.dataValues.create_time = moment(group.create_time).format('lll');
+                group.dataValues.deadline_time = moment(group.deadline_time).format('lll');
 
                 groups[index] = group;
             }
@@ -80,6 +85,8 @@ exports.getGroupInfo = async (req, res) => {
 
     const { group_id } = req.query;
 
+    console.log(req.query);
+
     var msg = "";
     var result = {};
 
@@ -139,6 +146,8 @@ exports.createGroup = async (req, res) => {
 
     const { body } = req;
 
+    console.log(body);
+
     var msg = "";
     var result = {};
 
@@ -190,9 +199,11 @@ exports.createGroup = async (req, res) => {
         try {
             const member = req.decoded;
 
+            if (req.file !== undefined){
+                body.image = req.file.path;
+            }
+
             const insertResult = await models.Group.createGroup(body, member.id);
-            console.log(insertResult.founder);
-            console.log(insertResult.id);
 
             const join = {
                 isAdmin: 1,
@@ -200,8 +211,6 @@ exports.createGroup = async (req, res) => {
                 group_id: insertResult.id,
                 member_id: member.id
             };
-
-            console.log(join)
 
             await models.GroupMember.join(join);
 
@@ -241,13 +250,12 @@ exports.modifyGroup = async (req, res) => {
     const { body } = req;
     const member = req.decoded;
 
+    console.log(body);
+
     const found = await models.Group.findGroupFounder(body.group_id);
 
     var msg = "";
     var result = {};
-
-    console.log(member);
-    console.log(found)
 
     if (!body.group_id) {
         msg = "group_id가 없습니다.";
@@ -271,6 +279,7 @@ exports.modifyGroup = async (req, res) => {
         res.status(400).json(result);
     } else {
         try {
+            body.image = req.file.path;
             await models.Group.modify(body);
 
             msg = "그룹 정보 수정 성공";
@@ -308,6 +317,8 @@ exports.delete = async (req, res) => {
 
     const { group_id } = req.body;
     const member = req.decoded;
+
+    console.log(body);
 
     const found = await models.Group.findGroupFounder(group_id);
     
@@ -373,6 +384,8 @@ exports.joinGroup = async (req, res) => {
 
     const { group_id } = req.body;
     const member = req.decoded;
+
+    console.log(req.body);
 
     let result = {};
     let InsertResult = {};
@@ -452,6 +465,8 @@ exports.accecptJoin = async (req, res) => {
 
     const { group_id, member_id } = req.body;
     const member = req.decoded;
+
+    console.log(req.body);
 
     let result = {};
     let InsertResult = {};
