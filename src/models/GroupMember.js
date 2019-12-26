@@ -1,3 +1,5 @@
+const colors = require('colors');
+
 module.exports = (sequelize, DataTypes) => {
     const GroupMember = sequelize.define('GroupMember', {
         id: {
@@ -123,6 +125,40 @@ module.exports = (sequelize, DataTypes) => {
         };
     }
 
+    GroupMember.checkMember = async (group_id, member_id) => {
+        try {
+            const checkValue = await GroupMember.findOne({
+                where: {
+                    group_id, 
+                    member_id,
+                },
+    
+                raw: true,
+            });
+
+            if (!checkValue) {
+                return null;
+            }
+    
+            if (checkValue.member_status === 1) {
+                return false;
+            }
+    
+            return true;
+        } catch (error) {
+            msg = "서버 에러";
+
+            console.log(colors.red('ServerError: ' + error));
+
+            result = {
+                status: 500,
+                message: msg
+            };
+
+            return result;
+        };
+    }
+
     GroupMember.updateMemberStatus = async (group_id, member_id) => {
         try {
             const result = await GroupMember.findOne({
@@ -137,6 +173,55 @@ module.exports = (sequelize, DataTypes) => {
             }, {
                 where: {
                     id: result.id,
+                },
+    
+                raw: true,
+            });
+        } catch (error) {
+            msg = "서버 에러";
+
+            console.log(colors.red('ServerError: ' + error));
+
+            result = {
+                status: 500,
+                message: msg
+            };
+
+            return result;
+        };
+    }
+
+    GroupMember.transferAdmin = async (group_id, member_id, founder_id) => {
+        try {
+            const member = await GroupMember.findOne({
+                where: {
+                    group_id,
+                    member_id,
+                },
+            });
+
+            const founder = await GroupMember.findOne({
+                where: {
+                    group_id,
+                    founder_id,
+                },
+            });
+    
+            await GroupMember.update({
+                is_admin: 1
+            }, {
+                where: {
+                    id: member.id
+                },
+    
+                raw: true,
+            });
+
+            await GroupMember.update({
+                is_admin: 0
+            }, {
+                where: {
+                    id: founder.id,
                 },
     
                 raw: true,

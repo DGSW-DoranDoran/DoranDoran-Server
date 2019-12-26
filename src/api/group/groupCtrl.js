@@ -461,6 +461,105 @@ exports.accecptJoin = async (req, res) => {
     console.log(member.id);
 
     const checkFounder = await models.GroupMember.checkFounder(group_id, member.id);
+    const checkMember = await models.GroupMember.checkMember(group_id, member.id);
+
+    console.log(checkFounder);
+
+    try {
+        if (!group_id) {
+            msg = "group_id가 없습니다.";
+
+            console.log(colors.magenta('Error: ' + msg));
+
+            result = {
+                status: 400,
+                message: msg
+            };
+
+            res.status(400).json(result);
+        } else if(checkFounder === false) {
+            msg = "권한이 없습니다.(개설자 X)";
+
+            console.log(colors.magenta('Error: ' + msg));
+
+            result = {
+                status: 403,
+                message: msg
+            };
+
+            res.status(403).json(result);
+        } else if(checkFounder === null) {
+            msg = "신청한 유저가 아닙니다";
+
+            console.log(colors.magenta('Error: ' + msg));
+
+            result = {
+                status: 403,
+                message: msg
+            };
+
+            res.status(403).json(result);
+        } else if(!checkMember) {
+            msg = "이미 가입된 유저입니다";
+
+            console.log(colors.magenta('Error: ' + msg));
+
+            result = {
+                status: 403,
+                message: msg
+            };
+
+            res.status(403).json(result);
+        } else {
+            InsertResult = await models.GroupMember.updateMemberStatus(group_id, member_id);
+
+            let count = await models.Group.findMemberCount(group_id);
+
+            await models.Group.plusMemberCount(group_id, ++count.member_count);
+
+            if(InsertResult != undefined) {
+                res.status(500).json(InsertResult);
+            }
+
+            msg = "신청을 수락했습니다";
+
+            result = {
+                status: 200,
+                message: msg,
+            };
+
+            res.status(200).json(result);
+        };
+    } catch (error) {
+        msg = "서버 에러";
+
+        console.log(colors.red('ServerError: ' + error));
+
+        result = {
+            status: 500,
+            message: msg,
+            data: {
+                error
+            }
+        };
+
+        res.status(500).json(result);
+    };
+};
+
+exports.asdf = async (req, res) => {
+    console.log(colors.green('[GET] Get Groups'));
+
+    const { group_id, member_id } = req.body;
+    const member = req.decoded;
+
+    let result = {};
+    let InsertResult = {};
+
+    console.log(group_id);
+    console.log(member.id);
+
+    const checkFounder = await models.GroupMember.checkFounder(group_id, member.id);
 
     console.log(checkFounder);
 
@@ -506,7 +605,7 @@ exports.accecptJoin = async (req, res) => {
                 res.status(500).json(InsertResult);
             }
 
-            msg = "신청을 수락했습니다";
+            msg = "";
 
             result = {
                 status: 200,

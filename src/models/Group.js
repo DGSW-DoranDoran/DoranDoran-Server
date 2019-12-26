@@ -118,5 +118,24 @@ module.exports = (sequelize, DataTypes) => {
         raw: true,
     });
 
+    Group.findMemberCount = (group_id) => Group.findOne({
+        attributes: ['member_count'],
+        where: {
+            id: group_id,
+        },
+
+        raw: true,
+    })
+
+    Group.plusMemberCount = (group_id, count) => Group.update({
+        member_count: count
+    }, {
+        where: {
+            id: group_id
+        },
+
+        raw: true,
+    });
+
     return Group;
 };
