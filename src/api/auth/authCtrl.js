@@ -55,8 +55,6 @@ exports.login = async (req, res) => {
 
                 const token = await jwt.createToken(member.id, member.name);
 
-                console.log(token);
-
                 result = {
                     status: 200,
                     message: msg,
