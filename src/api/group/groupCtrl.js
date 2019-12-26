@@ -618,6 +618,8 @@ exports.transferAdmin = async (req, res) => {
                 res.status(500).json(InsertResult);
             }
 
+            await models.Group.transferAdmin(group_id, member_id);
+
             msg = "어드민 권한 양도 성공";
 
             result = {

@@ -132,7 +132,7 @@ module.exports = (sequelize, DataTypes) => {
 
         raw: true,
     });
-    
+
     Group.checkFounder = async (group_id, member_id) => {
         try {
             const checkValue = await Group.findOne({
@@ -151,6 +151,16 @@ module.exports = (sequelize, DataTypes) => {
             console.log(error);
         }
     }
+
+    Group.transferAdmin = (group_id, member_id) => Group.update({
+        founder: member_id
+    }, {
+        where: {
+            id: group_id
+        },
+
+        raw: true,
+    });
 
     return Group;
 };
