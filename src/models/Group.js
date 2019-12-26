@@ -39,14 +39,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false,
             defaultValue: 0
-        },
-        category_id: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        founder: {
-            type: DataTypes.STRING(45),
-            allowNull: false
         }
     });
 
@@ -55,6 +47,10 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'category_id',
             targetKey: 'id'
         });
+    };
+
+    Group.associate = (models) => {
+        models.Group.belongsTo(models.Member);
     };
 
     Group.associate = (models) => {

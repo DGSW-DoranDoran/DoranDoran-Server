@@ -39,6 +39,13 @@ module.exports = (sequelize, DataTypes) => {
         models.Member.hasMany(models.GroupMember);
     };
 
+    Member.associate = (models) => {
+        models.Member.hasMany(models.Group, {
+            foreignKey: 'founder',
+            targetKey: 'id'
+        });
+    }
+
     Member.DuplicateCheck = (id) => Member.findOne({
         where: {
             id: id
