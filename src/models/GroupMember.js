@@ -190,7 +190,7 @@ module.exports = (sequelize, DataTypes) => {
         };
     }
 
-    GroupMember.transferAdmin = async (group_id, member_id, founder_id) => {
+    GroupMember.transferAdmin = async (group_id, member_id) => {
         try {
             const member = await GroupMember.findOne({
                 where: {
@@ -202,12 +202,12 @@ module.exports = (sequelize, DataTypes) => {
             const founder = await GroupMember.findOne({
                 where: {
                     group_id,
-                    founder_id,
+                    is_admin: 1,
                 },
             });
     
-            await GroupMember.update({
-                is_admin: 1
+            const log1 = await GroupMember.update({
+                isAdmin: 1
             }, {
                 where: {
                     id: member.id
@@ -216,8 +216,8 @@ module.exports = (sequelize, DataTypes) => {
                 raw: true,
             });
 
-            await GroupMember.update({
-                is_admin: 0
+            const log2 = await GroupMember.update({
+                isAdmin: 0
             }, {
                 where: {
                     id: founder.id,

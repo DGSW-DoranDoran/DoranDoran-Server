@@ -559,7 +559,7 @@ exports.accecptJoin = async (req, res) => {
     };
 };
 
-exports.asdf = async (req, res) => {
+exports.transferAdmin = async (req, res) => {
     console.log(colors.green('[GET] Get Groups'));
 
     const { group_id, member_id } = req.body;
@@ -572,6 +572,7 @@ exports.asdf = async (req, res) => {
     console.log(member.id);
 
     const checkFounder = await models.GroupMember.checkFounder(group_id, member.id);
+    const checkMember = await models.GroupMember.checkMember(group_id, member_id);
 
     console.log(checkFounder);
 
@@ -598,7 +599,7 @@ exports.asdf = async (req, res) => {
             };
 
             res.status(400).json(result);
-        } else if(checkFounder === null) {
+        } else if(checkMember === null) {
             msg = "신청한 유저가 아닙니다";
 
             console.log(colors.magenta('Error: ' + msg));
@@ -611,13 +612,13 @@ exports.asdf = async (req, res) => {
             res.status(403).json(result);
         }
         else {
-            InsertResult = await models.GroupMember.updateMemberStatus(group_id, member_id);
+            InsertResult = await models.GroupMember.transferAdmin(group_id, member_id);
 
             if(InsertResult != undefined) {
                 res.status(500).json(InsertResult);
             }
 
-            msg = "";
+            msg = "어드민 권한 양도 성공";
 
             result = {
                 status: 200,
