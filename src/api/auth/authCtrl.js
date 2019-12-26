@@ -24,7 +24,7 @@ exports.login = async (req, res) => {
         };
 
         res.status(400).json(result);
-    } else if (!password) {
+    } else if (password === undefined) {
         msg = "password가 없습니다.";
 
         console.log(colors.magenta('Error: ' + msg));
@@ -92,6 +92,8 @@ exports.register = async (req, res) => {
     console.log(colors.yellow('[POST] Register'));
 
     const { body } = req;
+
+    console.log(body);
 
     var msg = "";
     var result = {};
@@ -178,7 +180,9 @@ exports.register = async (req, res) => {
             const check = await models.Member.DuplicateCheck(body.id);
 
             if (!check) {
-                body.image = req.file.path;
+                if (req.file !== undefined) {
+                    body.image = req.file.path;
+                }
                 await models.Member.register(body);
 
                 msg = "회원가입 성공";
@@ -190,7 +194,7 @@ exports.register = async (req, res) => {
 
                 res.status(200).json(result);
 
-                console.log('Success: ' + msg);
+                console.log(colors.green('Success: ' + msg));
             } else {
                 msg = "이미 등록된 아이디입니다.";
 
@@ -227,6 +231,8 @@ exports.findInfo = async (req, res) => {
     console.log(colors.yellow('[GET] info'));
 
     const { member_id } = req.body;
+
+    console.log(req.body);
 
     var msg = "";
     var result = {};
