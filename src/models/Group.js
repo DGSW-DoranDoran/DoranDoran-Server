@@ -123,7 +123,9 @@ module.exports = (sequelize, DataTypes) => {
                 }
             });
 
-            if (!checkValue) {
+            console.log(!checkValue);
+
+            if (checkValue) {
                 return null;
             }
 
@@ -132,6 +134,20 @@ module.exports = (sequelize, DataTypes) => {
             console.log(error);
         }
     }
+
+    Group.uncompleted = async () => Group.findAll({
+        where: {
+            status: 0
+        }
+    });
+
+    Group.changeStatus = async (group_id) => Group.update({
+        status: 1
+    }, {
+        where: {
+            id: group_id
+        }
+    })
 
     return Group;
 };
