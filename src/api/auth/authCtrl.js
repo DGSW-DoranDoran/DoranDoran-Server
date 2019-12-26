@@ -230,9 +230,9 @@ exports.register = async (req, res) => {
 exports.findInfo = async (req, res) => {
     console.log(colors.yellow('[GET] info'));
 
-    const { member_id } = req.body;
+    const { member_id } = req.query;
 
-    console.log(req.body);
+    console.log(req.query);
 
     var msg = "";
     var result = {};
@@ -265,7 +265,7 @@ exports.findInfo = async (req, res) => {
 
                 res.status(403).json(result);
             } else {
-                msg = '조회 성공';
+                msg = '유저 조회 성공';
 
                 console.log(colors.green('Success: ', msg));
 
