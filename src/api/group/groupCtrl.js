@@ -560,7 +560,7 @@ exports.accecptJoin = async (req, res) => {
 };
 
 exports.transferAdmin = async (req, res) => {
-    console.log(colors.green('[GET] Get Groups'));
+    console.log(colors.green('[PUT] Transfer Admin'));
 
     const { group_id, member_id } = req.body;
     const member = req.decoded;
@@ -590,6 +590,17 @@ exports.transferAdmin = async (req, res) => {
             res.status(400).json(result);
         } else if(checkFounder === false) {
             msg = "권한이 없습니다.(개설자 X)";
+
+            console.log(colors.magenta('Error: ' + msg));
+
+            result = {
+                status: 400,
+                message: msg
+            };
+
+            res.status(400).json(result);
+        } else if(checkFounder === true) {
+            msg = "자기 자신에게 양도할 수 없습니다.";
 
             console.log(colors.magenta('Error: ' + msg));
 
@@ -641,4 +652,98 @@ exports.transferAdmin = async (req, res) => {
 
         res.status(500).json(result);
     };
+};
+
+exports.secession = async (req, res) => {
+    console.log(colors.red('[DELETE] Secession Group'));
+
+    const { group_id } = req.body;
+    const member = req.decoded;
+
+    const checkFounder = await models.GroupMember.checkFounder(group_id, member.id);
+    const checkMember = await models.GroupMember.checkMember(group_id, member.id);
+    
+    var msg = "";
+    var result = {};
+
+    if (!group_id) {
+        msg = "group_id가 없습니다.";
+
+        console.log(colors.magenta('Error: ' + msg));
+
+        result = {
+            status: 400,
+            message: msg
+        };
+
+        res.status(400).json(result);
+    } else if(!member) {
+        msg = "토큰이 없습니다."
+
+        console.log(colors.magenta('Error: ' + msg));
+
+        const result = {
+            status: 400,
+            message: msg
+        }
+
+        res.status(400).json(result);
+    } else if(checkFounder === true) {
+        msg = "개설자는 탈퇴할 수 없습니다.";
+
+        console.log(colors.magenta('Error: ' + msg));
+
+        result = {
+            status: 400,
+            message: msg
+        };
+
+        res.status(400).json(result);
+    } else if(checkMember === null || checkMember) {
+        msg = "그룹에 가입된 유저가 아닙니다."
+        
+        console.log(colors.magenta('Error: ' + msg));
+
+        const result = {
+            status: 400,
+            message: msg
+        }
+
+        res.status(400).json(result);
+    } else {
+        try {
+            await models.GroupMember.secession(group_id, member.id);
+
+            let count = await models.Group.findMemberCount(group_id);
+
+            msg = "그룹 삭제 성공";
+
+            console.log(colors.green('Success: ' + msg));
+
+            result = {
+                status: 200,
+                message: msg
+            };
+
+            await models.Group.plusMemberCount(group_id, --count.member_count);
+
+            res.status(200).json(result);
+        } catch (error) {
+            msg = "서버 에러";
+
+            console.log(colors.red('ServerError: ' + error));
+
+            result = {
+                status: 500,
+                message: msg
+            };
+
+            res.status(500).json(result);
+        };
+    };
+    
+    result.body = Object.values(req.body);
+    result.query = Object.values(req.query);
+
+    slack(result);
 };

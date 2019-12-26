@@ -135,6 +135,9 @@ module.exports = (sequelize, DataTypes) => {
                 raw: true,
             });
 
+            console.log("빠나나");
+            console.log(checkValue);
+
             if (!checkValue) {
                 return null;
             }
@@ -197,6 +200,8 @@ module.exports = (sequelize, DataTypes) => {
                     group_id,
                     member_id,
                 },
+
+                raw: true,
             });
 
             const founder = await GroupMember.findOne({
@@ -204,9 +209,15 @@ module.exports = (sequelize, DataTypes) => {
                     group_id,
                     is_admin: 1,
                 },
+
+                raw: true,
             });
+
+            console.log(member_id);
+            console.log(founder);
+            console.log(member);
     
-            const log1 = await GroupMember.update({
+            await GroupMember.update({
                 isAdmin: 1
             }, {
                 where: {
@@ -216,7 +227,7 @@ module.exports = (sequelize, DataTypes) => {
                 raw: true,
             });
 
-            const log2 = await GroupMember.update({
+            await GroupMember.update({
                 isAdmin: 0
             }, {
                 where: {
@@ -237,7 +248,16 @@ module.exports = (sequelize, DataTypes) => {
 
             return result;
         };
-    }
+    };
+
+    GroupMember.secession = (group_id, member_id) => GroupMember.destroy({
+        where: {
+            group_id,
+            member_id,
+        },
+
+        raw: true,
+    });
 
     return GroupMember;
 };
