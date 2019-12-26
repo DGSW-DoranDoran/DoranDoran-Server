@@ -1,15 +1,20 @@
 const express = require('express');
 const cors = require('cors');
+const multer = require('multer');
 const colors = require('colors');
 const db = require('./models/index');
 const api = require('./api');
 const secret = require('./config/config.json').secret;
 
 const app = express();
+const upload = multer({dest: './public'});
 
 app.use(cors());
+app.use(express.raw());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(upload.single('image'));
+app.use(express.static('/public'));
 
 app.set('jwt-secret', secret);
 

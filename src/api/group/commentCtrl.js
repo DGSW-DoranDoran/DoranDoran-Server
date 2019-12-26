@@ -7,6 +7,8 @@ exports.getComments = async (req, res) => {
 
     const { group_id } = req.query;
 
+    console.log(req.query);
+
     var msg = "";
     var result = {};
 
@@ -62,6 +64,8 @@ exports.write = async(req, res) => {
     console.log(colors.yellow('[POST] Write Comment'));
 
     const { body } = req;
+
+    console.log(body);
 
     var msg = "";
     var result = {};
@@ -138,6 +142,8 @@ exports.modify = async (req, res) => {
 
     const { body } = req;
 
+    console.log(body);
+
     var msg = "";
     var result = {};
 
@@ -212,6 +218,8 @@ exports.delete = async (req, res) => {
     console.log(colors.red('[DELETE] Delete Comment'));
 
     const { comment_id } = req.body;
+
+    console.log(req.body);
 
     var msg = "";
     var result = {};

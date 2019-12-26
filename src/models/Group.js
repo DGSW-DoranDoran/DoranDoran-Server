@@ -39,14 +39,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false,
             defaultValue: 0
-        },
-        category_id: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        founder: {
-            type: DataTypes.STRING(45),
-            allowNull: false
         }
     });
 
@@ -55,6 +47,10 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'category_id',
             targetKey: 'id'
         });
+    };
+
+    Group.associate = (models) => {
+        models.Group.belongsTo(models.Member);
     };
 
     Group.associate = (models) => {
@@ -136,6 +132,25 @@ module.exports = (sequelize, DataTypes) => {
 
         raw: true,
     });
+    
+    Group.checkFounder = async (group_id, member_id) => {
+        try {
+            const checkValue = await Group.findOne({
+                where: {
+                    id: group_id,
+                    founder: member_id
+                }
+            });
+
+            if (!checkValue) {
+                return null;
+            }
+
+            return true;
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     return Group;
 };

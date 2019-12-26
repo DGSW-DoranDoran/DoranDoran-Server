@@ -8,6 +8,8 @@ exports.login = async (req, res) => {
 
     const { id, password } = req.body;
 
+    console.log(req.body);
+
     var msg = "";
     var result = {};
 
@@ -22,7 +24,7 @@ exports.login = async (req, res) => {
         };
 
         res.status(400).json(result);
-    } else if (!password) {
+    } else if (password === undefined) {
         msg = "password가 없습니다.";
 
         console.log(colors.magenta('Error: ' + msg));
@@ -91,6 +93,8 @@ exports.register = async (req, res) => {
 
     const { body } = req;
 
+    console.log(body);
+
     var msg = "";
     var result = {};
 
@@ -138,7 +142,7 @@ exports.register = async (req, res) => {
         };
 
         res.status(400).json(result);
-    } else if (!body.gender) {
+    } else if (body.gender === undefined) {
         msg = "gender가 없습니다.";
 
         console.log(colors.magenta('Error: ' + msg));
@@ -149,7 +153,7 @@ exports.register = async (req, res) => {
         };
 
         res.status(400).json(result);
-    } else if (!body.grade) {
+    } else if (body.grade === undefined) {
         msg = "grade가 없습니다.";
 
         console.log(colors.magenta('Error: ' + msg));
@@ -176,6 +180,9 @@ exports.register = async (req, res) => {
             const check = await models.Member.DuplicateCheck(body.id);
 
             if (!check) {
+                if (req.file !== undefined) {
+                    body.image = req.file.path;
+                }
                 await models.Member.register(body);
 
                 msg = "회원가입 성공";
@@ -187,7 +194,7 @@ exports.register = async (req, res) => {
 
                 res.status(200).json(result);
 
-                console.log('Success: ' + msg);
+                console.log(colors.green('Success: ' + msg));
             } else {
                 msg = "이미 등록된 아이디입니다.";
 
@@ -223,7 +230,9 @@ exports.register = async (req, res) => {
 exports.findInfo = async (req, res) => {
     console.log(colors.yellow('[GET] info'));
 
-    const { member_id } = req.body;
+    const { member_id } = req.query;
+
+    console.log(req.query);
 
     var msg = "";
     var result = {};
@@ -256,7 +265,7 @@ exports.findInfo = async (req, res) => {
 
                 res.status(403).json(result);
             } else {
-                msg = '조회 성공';
+                msg = '유저 조회 성공';
 
                 console.log(colors.green('Success: ', msg));
 
