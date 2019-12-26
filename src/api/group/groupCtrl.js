@@ -467,15 +467,13 @@ exports.accecptJoin = async (req, res) => {
     const member = req.decoded;
 
     console.log(req.body);
+    console.log(member);
 
     let result = {};
     let InsertResult = {};
 
-    console.log(group_id);
-    console.log(member.id);
-
     const checkFounder = await models.GroupMember.checkFounder(group_id, member.id);
-    const checkMember = await models.GroupMember.checkMember(group_id, member.id);
+    const checkMember = await models.GroupMember.checkMember(group_id, member_id);
 
     console.log(checkFounder);
 
@@ -502,7 +500,7 @@ exports.accecptJoin = async (req, res) => {
             };
 
             res.status(403).json(result);
-        } else if(checkFounder === null) {
+        } else if(checkMember === null) {
             msg = "신청한 유저가 아닙니다";
 
             console.log(colors.magenta('Error: ' + msg));
@@ -513,7 +511,7 @@ exports.accecptJoin = async (req, res) => {
             };
 
             res.status(403).json(result);
-        } else if(!checkMember) {
+        } else if(checkMember === false) {
             msg = "이미 가입된 유저입니다";
 
             console.log(colors.magenta('Error: ' + msg));
@@ -529,8 +527,6 @@ exports.accecptJoin = async (req, res) => {
 
             let count = await models.Group.findMemberCount(group_id);
 
-            await models.Group.plusMemberCount(group_id, ++count.member_count);
-
             if(InsertResult != undefined) {
                 res.status(500).json(InsertResult);
             }
@@ -541,6 +537,8 @@ exports.accecptJoin = async (req, res) => {
                 status: 200,
                 message: msg,
             };
+
+            await models.Group.plusMemberCount(group_id, ++count.member_count);
 
             res.status(200).json(result);
         };

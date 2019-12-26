@@ -67,6 +67,8 @@ module.exports = (sequelize, DataTypes) => {
                 },
                 raw: true,
             });
+
+            console.log(checkValue);
     
             if (checkValue.length > 0) {
                 return false;
@@ -98,8 +100,9 @@ module.exports = (sequelize, DataTypes) => {
                 raw: true,
             });
 
-            if (!checkValue) {
-                return null;
+            if(!checkValue)
+            {
+                return false;
             }
     
             if (checkValue.isAdmin !== 1) {
