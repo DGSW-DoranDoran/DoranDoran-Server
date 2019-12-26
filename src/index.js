@@ -22,6 +22,6 @@ db.sequelize.sync();
 
 app.use('/', api);
 
-const listener = app.listen(3001, () => {
+const listener = app.listen(3000, () => {
     console.log(colors.white("Server Started at " + listener.address().port));
 });

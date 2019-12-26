@@ -63,5 +63,12 @@ module.exports = (sequelize, DataTypes) => {
         image: data.image
     });
 
+    Member.findInfo = (id) => Member.findOne({
+        attributes: ['name', 'phone', 'gender', 'grade', 'position', 'image'],
+        where: {
+            id: id
+        }
+    });
+
     return Member;
 };
