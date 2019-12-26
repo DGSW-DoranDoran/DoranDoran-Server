@@ -82,40 +82,6 @@ module.exports = (sequelize, DataTypes) => {
         };
     }
 
-    GroupMember.checkFounder = async (group_id, member_id) => {
-        try {
-            const checkValue = await GroupMember.findOne({
-                where: {
-                    group_id, 
-                    member_id,
-                },
-    
-                raw: true,
-            });
-
-            if (!checkValue) {
-                return null;
-            }
-    
-            if (checkValue.isAdmin !== 1) {
-                return false;
-            }
-    
-            return true;
-        } catch (error) {
-            msg = "서버 에러";
-
-            console.log(colors.red('ServerError: ' + error));
-
-            result = {
-                status: 500,
-                message: msg
-            };
-
-            return result;
-        };
-    }
-
     GroupMember.updateMemberStatus = async (group_id, member_id) => {
         try {
             const result = await GroupMember.findOne({

@@ -118,5 +118,24 @@ module.exports = (sequelize, DataTypes) => {
         raw: true,
     });
 
+    Group.checkFounder = async (group_id, member_id) => {
+        try {
+            const checkValue = await Group.findOne({
+                where: {
+                    id: group_id,
+                    founder: member_id
+                }
+            });
+
+            if (!checkValue) {
+                return null;
+            }
+
+            return true;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return Group;
 };

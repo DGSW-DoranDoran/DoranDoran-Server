@@ -12,7 +12,6 @@ exports.getGroups = async (req, res) => {
 
     try {
         if (!category_id) {
-            const retVal = [];
             const groups = await models.Group.getAllGroups();
 
             for (let index = 0; index < groups.length; index += 1) {
@@ -370,7 +369,7 @@ exports.delete = async (req, res) => {
 };
 
 exports.joinGroup = async (req, res) => {
-    console.log(colors.green('[GET] Get Groups'));
+    console.log(colors.yellow('[POST] Join Group'));
 
     const { group_id } = req.body;
     const member = req.decoded;
@@ -419,7 +418,7 @@ exports.joinGroup = async (req, res) => {
 
             InsertResult = await models.GroupMember.join(join);
 
-            const msg = "신청 성공";
+            const msg = "그룹 신청 성공";
 
             result = {
                 status: 200,
@@ -449,7 +448,7 @@ exports.joinGroup = async (req, res) => {
 };
 
 exports.accecptJoin = async (req, res) => {
-    console.log(colors.green('[GET] Get Groups'));
+    console.log(colors.blue('[PUT] Accept Join'));
 
     const { group_id, member_id } = req.body;
     const member = req.decoded;
@@ -457,10 +456,7 @@ exports.accecptJoin = async (req, res) => {
     let result = {};
     let InsertResult = {};
 
-    console.log(group_id);
-    console.log(member.id);
-
-    const checkFounder = await models.GroupMember.checkFounder(group_id, member.id);
+    const checkFounder = await models.Group.checkFounder(group_id, member.id);
 
     console.log(checkFounder);
 
@@ -510,7 +506,7 @@ exports.accecptJoin = async (req, res) => {
 
             result = {
                 status: 200,
-                message: msg,
+                message: msg
             };
 
             res.status(200).json(result);
@@ -522,10 +518,7 @@ exports.accecptJoin = async (req, res) => {
 
         result = {
             status: 500,
-            message: msg,
-            data: {
-                error
-            }
+            message: msg
         };
 
         res.status(500).json(result);
