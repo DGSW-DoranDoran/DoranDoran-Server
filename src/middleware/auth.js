@@ -1,7 +1,7 @@
 const tokenLib = require('../lib/token');
 
 const verifyToken = async (req, res, next) => {
-    const token = req.headers['x-access-token'];
+    const token = req.headers['token'];
     try {
         let decoded = await tokenLib.verifyToken(token);
 
