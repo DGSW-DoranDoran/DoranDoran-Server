@@ -7,14 +7,14 @@ const api = require('./api');
 const secret = require('./config/config.json').secret;
 
 const app = express();
-const upload = multer({dest: './public'});
+const upload = multer({dest: './src/img'});
 
 app.use(cors());
 app.use(express.raw());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(upload.single('image'));
-app.use(express.static('/public'));
+app.use(express.static('/src/img'));
 
 app.set('jwt-secret', secret);
 
