@@ -31,6 +31,6 @@ db.sequelize.sync();
 app.use(middleware.checkTime);
 app.use('/', api);
 
-const listener = app.listen(3001, () => {
+const listener = app.listen(3000, () => {
     console.log(colors.white("Server Started at " + listener.address().port));
 });
