@@ -180,9 +180,11 @@ exports.register = async (req, res) => {
             const check = await models.Member.DuplicateCheck(body.id);
 
             if (!check) {
+                console.log(req.file);
                 if (req.file !== undefined) {
                     body.image = req.file.path;
                 }
+
                 await models.Member.register(body);
 
                 msg = "회원가입 성공";
