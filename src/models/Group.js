@@ -133,6 +133,34 @@ module.exports = (sequelize, DataTypes) => {
         raw: true,
     });
 
+    Group.findDeadlineCount = (group_id) => Group.findOne({
+        attributes: ['deadline_member_count'],
+        where: {
+            id: group_id,
+        },
+
+        raw: true,
+    })
+
+    Group.findStatus = (group_id) => Group.findOne({
+        attributes: ['status'],
+        where: {
+            id: group_id,
+        },
+
+        raw: true,
+    })
+
+    Group.lockGroup = (group_id) => Group.update({
+        status: 1
+    }, {
+        where: {
+            id: group_id,
+        },
+
+        raw: true,
+    })
+
     Group.checkFounder = async (group_id, member_id) => {
         try {
             const checkValue = await Group.findOne({

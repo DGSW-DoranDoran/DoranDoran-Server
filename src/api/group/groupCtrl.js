@@ -395,6 +395,8 @@ exports.joinGroup = async (req, res) => {
 
     const checkDistinct = await models.GroupMember.checkDistinct(group_id, member.id);
 
+    const checkStatus = await models.Group.findStatus(group_id);
+
     console.log(checkDistinct);
 
     try {
@@ -409,9 +411,19 @@ exports.joinGroup = async (req, res) => {
             };
 
             res.status(400).json(result);
-        }
-        else if(!checkDistinct) {
+        } else if(!checkDistinct) {
             msg = "이미 신청중인 그룹입니다.";
+
+            console.log(colors.magenta('Error: ' + msg));
+
+            result = {
+                status: 403,
+                message: msg
+            };
+
+            res.status(403).json(result);
+        } else if(checkStatus.status === 1) {
+            msg = "신청이 마감된 그룹입니다";
 
             console.log(colors.magenta('Error: ' + msg));
 
@@ -539,6 +551,18 @@ exports.accecptJoin = async (req, res) => {
             };
 
             await models.Group.plusMemberCount(group_id, ++count.member_count);
+
+            count = await models.Group.findMemberCount(group_id);
+
+            const deadlineCount = await models.Group.findDeadlineCount(group_id);
+
+            console.log(count);
+            console.log(deadlineCount);
+
+            if(deadlineCount.deadline_member_count === count.member_count)
+            {
+                await models.Group.lockGroup(group_id);
+            }
 
             res.status(200).json(result);
         };
@@ -747,3 +771,6 @@ exports.secession = async (req, res) => {
 
     slack(result);
 };
+
+// deadline_time: 신청할떄 new Date()로 시간 비교해 status 변경 후 response 전송
+// member_count: 신청한 뒤 member_count === deadline_member_count일때 status 변경 후 response 전송
