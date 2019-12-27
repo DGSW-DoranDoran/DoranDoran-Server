@@ -215,7 +215,9 @@ exports.createGroup = async (req, res) => {
             const member = req.decoded;
 
             if (req.file !== undefined) {
-                body.image = req.file.path;
+                let path = req.file.path;
+                path = path.split('\\');
+                body.image = path[1];
             }
 
             const insertResult = await models.Group.createGroup(body, member.id);
