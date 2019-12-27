@@ -82,8 +82,10 @@ module.exports = (sequelize, DataTypes) => {
         deadline_time: data.deadline_time,
         deadline_member_count: data.deadline_member_count,
         image: data.image,
-        category_id: data.category_id,
-        founder: id
+        CategoryId: data.category_id,
+        founder: id,
+
+        raw: true,
     });
 
     Group.modify = (data) => Group.update({
@@ -144,16 +146,6 @@ module.exports = (sequelize, DataTypes) => {
 
     Group.findStatus = (group_id) => Group.findOne({
         attributes: ['status'],
-        where: {
-            id: group_id,
-        },
-
-        raw: true,
-    })
-
-    Group.lockGroup = (group_id) => Group.update({
-        status: 1
-    }, {
         where: {
             id: group_id,
         },
