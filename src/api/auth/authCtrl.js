@@ -182,7 +182,9 @@ exports.register = async (req, res) => {
             if (!check) {
                 console.log(req.file);
                 if (req.file !== undefined) {
-                    body.image = req.file.path;
+                    let path = req.file.path;
+                    path = path.split('\\');
+                    body.image = path[1];
                 }
 
                 await models.Member.register(body);
