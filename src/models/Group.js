@@ -170,7 +170,9 @@ module.exports = (sequelize, DataTypes) => {
                 }
             });
 
-            if (!checkValue) {
+            console.log(!checkValue);
+
+            if (checkValue) {
                 return null;
             }
 
@@ -180,15 +182,19 @@ module.exports = (sequelize, DataTypes) => {
         }
     }
 
-    Group.transferAdmin = (group_id, member_id) => Group.update({
-        founder: member_id
+    Group.uncompleted = async () => Group.findAll({
+        where: {
+            status: 0
+        }
+    });
+
+    Group.changeStatus = async (group_id) => Group.update({
+        status: 1
     }, {
         where: {
             id: group_id
-        },
-
-        raw: true,
-    });
+        }
+    })
 
     return Group;
 };
