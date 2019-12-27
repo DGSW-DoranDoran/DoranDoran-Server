@@ -842,5 +842,93 @@ exports.secession = async (req, res) => {
     slack(result);
 };
 
+exports.joinDeny = async (req, res) => {
+    console.log(colors.red('[DELETE] Secession Group'));
+
+    const { group_id, member_id } = req.body;
+    const member = req.decoded;
+
+    const checkFounder = await models.GroupMember.checkFounder(group_id, member.id);
+    const checkMember = await models.GroupMember.checkMember(group_id, member_id);
+    
+    var msg = "";
+    var result = {};
+
+    if (!group_id) {
+        msg = "group_id가 없습니다.";
+
+        console.log(colors.magenta('Error: ' + msg));
+
+        result = {
+            status: 400,
+            message: msg
+        };
+
+        res.status(400).json(result);
+    } else if(!member) {
+        msg = "토큰이 없습니다."
+
+        console.log(colors.magenta('Error: ' + msg));
+
+        const result = {
+            status: 400,
+            message: msg
+        }
+
+        res.status(400).json(result);
+    } else if(checkFounder === false) {
+        msg = "권한이 없습니다.(개설자 X)";
+
+        console.log(colors.magenta('Error: ' + msg));
+
+        result = {
+            status: 400,
+            message: msg
+        };
+
+        res.status(400).json(result);
+    } else if(!checkMember) {
+        msg = "이미 가입된 유저입니다."
+        
+        console.log(colors.magenta('Error: ' + msg));
+
+        const result = {
+            status: 400,
+            message: msg
+        }
+
+        res.status(400).json(result);
+    } else {
+        try {
+            await models.GroupMember.secession(group_id, member_id);
+
+            msg = "신청 거절";
+
+            result = {
+                status: 200,
+                message: msg
+            };
+
+            res.status(200).json(result);
+        } catch (error) {
+            msg = "서버 에러";
+
+            console.log(colors.red('ServerError: ' + error));
+
+            result = {
+                status: 500,
+                message: msg
+            };
+
+            res.status(500).json(result);
+        };
+    };
+    
+    result.body = Object.values(req.body);
+    result.query = Object.values(req.query);
+
+    slack(result);
+};
+
 // deadline_time: 신청할떄 new Date()로 시간 비교해 status 변경 후 response 전송
 // member_count: 신청한 뒤 member_count === deadline_member_count일때 status 변경 후 response 전송

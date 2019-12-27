@@ -11,6 +11,7 @@ router.put('/accept', middleWareAuth, groupCtrl.accecptJoin);
 router.put('/modify', middleWareAuth, groupCtrl.modifyGroup);
 router.put('/trans', middleWareAuth, groupCtrl.transferAdmin);
 router.put('/lock', middleWareAuth, groupCtrl.lockGroup);
+router.put('/deny', middleWareAuth, groupCtrl.joinDeny);
 router.delete('/delete', middleWareAuth, groupCtrl.delete);
 router.delete('/secession', middleWareAuth, groupCtrl.secession);
 
