@@ -489,7 +489,7 @@ exports.joinGroup = async (req, res) => {
 };
 
 exports.accecptJoin = async (req, res) => {
-    console.log(colors.blue('[PUT] Accept Join'));
+    console.log(colors.blue('[PUT] Accecpt Join'));
 
     const { group_id, member_id } = req.body;
     const member = req.decoded;
@@ -577,8 +577,84 @@ exports.accecptJoin = async (req, res) => {
 
             if(deadlineCount.deadline_member_count === count.member_count)
             {
-                await models.Group.lockGroup(group_id);
+                await models.Group.changeStatus(group_id);
             }
+
+            res.status(200).json(result);
+        };
+    } catch (error) {
+        msg = "서버 에러";
+
+        console.log(colors.red('ServerError: ' + error));
+
+        result = {
+            status: 500,
+            message: msg,
+            data: {
+                error
+            }
+        };
+
+        res.status(500).json(result);
+    };
+};
+
+exports.lockGroup = async (req, res) => {
+    console.log(colors.blue('[PUT] Accecpt Join'));
+
+    const { group_id } = req.body;
+    const member = req.decoded;
+
+    console.log(req.body);
+    console.log(member);
+
+    let result = {};
+
+    const checkFounder = await models.GroupMember.checkFounder(group_id, member.id);
+
+    try {
+        if (!group_id) {
+            msg = "group_id가 없습니다.";
+
+            console.log(colors.magenta('Error: ' + msg));
+
+            result = {
+                status: 400,
+                message: msg
+            };
+
+            res.status(400).json(result);
+        } else if (!member) {
+            msg = "토큰이 없습니다.";
+
+            console.log(colors.magenta('Error: ' + msg));
+
+            result = {
+                status: 400,
+                message: msg
+            };
+
+            res.status(400).json(result);
+        } else if (checkFounder === false) {
+            msg = "권한이 없습니다.(개설자 X)";
+
+            console.log(colors.magenta('Error: ' + msg));
+
+            result = {
+                status: 403,
+                message: msg
+            };
+
+            res.status(403).json(result);
+        } else {
+            await models.Group.changeStatus(group_id);
+
+            msg = "변경 성공";
+
+            result = {
+                status: 200,
+                message: msg,
+            };
 
             res.status(200).json(result);
         };
